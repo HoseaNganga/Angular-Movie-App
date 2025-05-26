@@ -1,12 +1,12 @@
 @use "../utilities/_variables.scss" as *;
 
-.navbar {
+.sidebar {
   position: fixed;
   right: 0;
   bottom: 0;
   left: 0;
   z-index: 5;
-  height: 4.5rem;
+  height: 5rem;
   background-color: #000;
 
   @media (min-width: $breakpoint-large) {
@@ -60,15 +60,59 @@
       opacity: 0.8;
     }
   }
-}
 
-a.nuxt-link-active {
-  &:hover,
-  &:focus {
-    opacity: 1;
+  a {
+    @media (max-width: $breakpoint-large) {
+      display: grid;
+      place-items: center;
+    }
   }
 
-  svg g {
-    stroke: $primary-color;
+  .nav-text {
+    display: none;
+  }
+
+  .nav-text {
+    @media (max-width: $breakpoint-large) {
+      display: block;
+    }
+  }
+  a {
+    svg g {
+      stroke: #fff;
+      transition: stroke 0.3s ease;
+    }
+    .nav-text {
+      color: #fff;
+    }
+
+    &:hover,
+    &:focus,
+    &.active {
+      svg g {
+        stroke: $primary-color;
+      }
+      .nav-text {
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 10rem;
+  z-index: 5;
+  height: 6rem;
+  background-color: #000;
+  right: 0;
+  @media (max-width: $breakpoint-large) {
+    left: 0;
+  }
+
+  .search-input {
+    border-radius: 15px;
+    font-size: 1.6rem;
   }
 }
