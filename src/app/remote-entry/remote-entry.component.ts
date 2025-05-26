@@ -5,10 +5,11 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { filter } from 'rxjs';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { SidebarComponent } from './components/global/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-remote-entry',
-  imports: [RouterModule, NavbarComponent, NgxSpinnerModule],
+  imports: [RouterModule, NavbarComponent, NgxSpinnerModule, SidebarComponent],
   templateUrl: './remote-entry.component.html',
   styleUrl: './remote-entry.component.scss',
   animations: [
