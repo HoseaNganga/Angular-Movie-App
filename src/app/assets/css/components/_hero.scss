@@ -125,6 +125,9 @@
     letter-spacing: $letter-spacing;
     cursor: pointer;
     text-transform: capitalize;
+    &:hover {
+      color: #a6db38;
+    }
 
     @media (min-width: $breakpoint-small) {
       margin-bottom: 1.8rem;

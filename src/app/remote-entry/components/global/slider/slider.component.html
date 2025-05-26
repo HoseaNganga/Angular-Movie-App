@@ -1,12 +1,13 @@
 <div class="hero">
   <ng-container *ngFor="let hero of data; let i = index">
-    <div class="hero-slide" *ngIf="current === i" @fade>
+    @if(current===i){
+    <div class="hero-slide" @fade>
       <div class="backdrop">
         <div class="lazyloaded">
           <img
             alt="{{ hero?.title || hero?.name }}"
             class="lazyload image"
-            src="https://image.tmdb.org/t/p/original/{{ hero?.backdrop_path }}"
+            src="https://image.tmdb.org/t/p/original{{ hero?.backdrop_path }}"
           />
         </div>
       </div>
@@ -20,24 +21,25 @@
               <div class="stars">
                 <div [style.width.%]="(hero.vote_average / 10) * 100"></div>
               </div>
-              <div *ngIf="hero.vote_count > 0">
-                {{ hero.vote_count | numberWithCommas }} Reviews
-              </div>
+              @if(hero.vote_count>0){
+              <div>{{ hero.vote_count | numberWithCommas }} Reviews</div>
+              }
             </div>
             <div class="info">
-              <span *ngIf="hero.number_of_seasons"
-                >Season {{ hero.number_of_seasons }}</span
-              >
-              <span *ngIf="hero?.release_date || hero?.first_air_date">{{
+              @if(hero.number_of_seasons){
+              <span>Season {{ hero.number_of_seasons }}</span>
+              } @if(hero?.release_date||hero?.first_air_date){
+              <span>{{
                 hero?.release_date || hero?.first_air_date | date
               }}</span>
+              }
             </div>
           </div>
           <div class="desc">
             {{ hero?.overview | truncate }}
           </div>
+          @if(hero.videoId){
           <button
-            *ngIf="hero.videoId"
             type="button"
             class="button button--icon trailer"
             (click)="openTrailer(hero)"
@@ -55,8 +57,13 @@
             </span>
             <span class="txt">Watch Trailer</span>
           </button>
+          }
         </div>
       </div>
     </div>
+
+    }
   </ng-container>
 </div>
+
+<app-modal></app-modal>

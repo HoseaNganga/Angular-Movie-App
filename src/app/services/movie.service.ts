@@ -1,19 +1,44 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
+import { environment } from '../../environments/environment';
+import { catchError, Observable, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieService {
   private readonly _httpClientService = inject(HttpClient);
-  private readonly _api_key = '';
+  private readonly _api_key = environment.apiKey;
+  private language = 'en-US';
 
-  getNowPlaying(): void {
-    this._httpClientService
-      .get('/api/?language=en-US&page=1')
-      .subscribe((res) => {
-        console.log(res);
-      });
+  getNowPlaying(mediaType: string, page: number): Observable<any> {
+    const params = this.buildParams({ page: page.toString() });
+    return this._httpClientService
+      .get(`/api/${mediaType}/now_playing`, { params })
+      .pipe(catchError(this.handleError));
+  }
+
+  getYouTubeTrailer(id: number, mediaType: string): Observable<any> {
+    const params = this.buildParams({});
+    return this._httpClientService
+      .get(`/api/${mediaType}/${id}/videos`, { params })
+      .pipe(catchError(this.handleError));
+  }
+
+  private buildParams(params: any): HttpParams {
+    let httpParams = new HttpParams()
+      .set('api_key', this._api_key)
+      .set('language', this.language);
+    for (const key in params) {
+      if (params.hasOwnProperty(key)) {
+        httpParams = httpParams.set(key, params[key]);
+      }
+    }
+    return httpParams;
+  }
+  private handleError(error: any): Observable<never> {
+    console.error('An error occurred', error);
+    return throwError(() => new Error('Something went wrong'));
   }
 }
 
