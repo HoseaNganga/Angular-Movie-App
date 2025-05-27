@@ -1,4 +1,11 @@
-import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { trigger, transition, animate, style } from '@angular/animations';
@@ -28,7 +35,7 @@ import { ModalComponent } from '../modal/modal.component';
     ]),
   ],
 })
-export class SliderComponent implements OnInit {
+export class SliderComponent implements OnInit, OnDestroy {
   @Input() data: any[] = [];
   @ViewChild(ModalComponent) modal!: ModalComponent;
   private readonly _movieService = inject(MovieService);
@@ -66,5 +73,10 @@ export class SliderComponent implements OnInit {
         console.error('Error fetching YouTube video:', error);
       }
     );
+  }
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 }
