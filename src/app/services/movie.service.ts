@@ -24,6 +24,12 @@ export class MovieService {
       .get(`/api/${mediaType}/${id}/videos`, { params })
       .pipe(catchError(this.handleError));
   }
+  getTrending(media: string, page: number): Observable<any> {
+    const params = this.buildParams({ page: page.toString() });
+    return this._httpClientService
+      .get(`/api/trending/${media}/week`, { params })
+      .pipe(catchError(this.handleError));
+  }
 
   private buildParams(params: any): HttpParams {
     let httpParams = new HttpParams()

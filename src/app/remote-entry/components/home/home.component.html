@@ -1,1 +1,8 @@
 <app-slider [data]="slider_data"></app-slider>
+<app-carousel
+  [canNavigateLeft]="false"
+  [canNavigateRight]="true"
+  [items]="trendingMovies_slider_data"
+  [isExplore]="false"
+  [exploreLink]="'/movie/category/now_playing'"
+></app-carousel>
