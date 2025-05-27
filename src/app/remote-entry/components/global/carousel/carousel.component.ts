@@ -37,6 +37,7 @@ export class CarouselComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() canNavigateRight = true;
   @Input() isDefaultCarousel = true;
   @Input() isExplore = true;
+  @Input() isCastCarousel = false;
 
   @ViewChild('carouselContainer') carouselContainer!: ElementRef;
 

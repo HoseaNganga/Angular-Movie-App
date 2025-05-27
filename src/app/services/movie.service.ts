@@ -49,6 +49,33 @@ export class MovieService {
       .pipe(catchError(this.handleError));
   }
 
+  getExternalId(id: number, mediaType: string): Observable<any> {
+    const params = this.buildParams({});
+    return this._httpClientService
+      .get(`/api/${mediaType}/${id}/external_ids`, { params })
+      .pipe(catchError(this.handleError));
+  }
+
+  getBackdrops(id: number, mediaType: string): Observable<any> {
+    return this._httpClientService.get(
+      `/api/${mediaType}/${id}/images?api_key=${this._api_key}`
+    );
+  }
+
+  getCredits(id: number, type: string): Observable<any> {
+    const params = this.buildParams({});
+    return this._httpClientService
+      .get(`/api/${type}/${id}/credits`, { params })
+      .pipe(catchError(this.handleError));
+  }
+  getRecommended(id: number, page: number, mediaType: string): Observable<any> {
+    const params = this.buildParams({});
+    return this._httpClientService.get(
+      `/api/${mediaType}/${id}/recommendations`,
+      { params }
+    );
+  }
+
   private buildParams(params: any): HttpParams {
     let httpParams = new HttpParams()
       .set('api_key', this._api_key)

@@ -4,11 +4,22 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { MovieService } from '../../../services/movie.service';
 import { CommonModule } from '@angular/common';
 import { HeroComponent } from '../global/hero/hero.component';
+import { MediaComponent } from '../global/media/media.component';
+import { VideosComponent } from '../global/videos/videos.component';
+import { ImagesComponent } from '../global/images/images.component';
+import { CarouselComponent } from '../global/carousel/carousel.component';
 
 @Component({
   selector: 'app-movies-info',
   templateUrl: './movies-info.component.html',
-  imports: [CommonModule, HeroComponent],
+  imports: [
+    CommonModule,
+    HeroComponent,
+    MediaComponent,
+    VideosComponent,
+    ImagesComponent,
+    CarouselComponent,
+  ],
   styleUrls: ['./movies-info.component.scss'],
 })
 export class MoviesInfoComponent implements OnInit {
@@ -33,6 +44,10 @@ export class MoviesInfoComponent implements OnInit {
       this._spinnerService.show();
       this.id = +params['id'];
       this.getMovieInfo(this.id);
+      this.getMovieVideos(this.id, 'movie');
+      this.getMoviesBackdrop(this.id, 'movie');
+      this.getMovieCast(this.id, 'movie');
+      this.getMovieRecommended(this.id, 1);
       setTimeout(() => {
         this._spinnerService.hide();
       }, 4000);
@@ -65,69 +80,73 @@ export class MoviesInfoComponent implements OnInit {
         }
       );
 
-      //this.getExternal(id);
+      this.getExternal(id, 'movie');
     });
   }
 
-  /*   getExternal(id: number) {
-    this.apiService.getExternalId(id, 'movie').subscribe((result: any) => {
-      this.external_data = result;
+  getExternal(id: number, mediaType: string) {
+    this._movieService.getExternalId(id, mediaType).subscribe((res: any) => {
+      this.external_data = res;
     });
   }
 
-  getMovieVideos(id: number) {
-    this.apiService.getYouTubeVideo(id, 'movie').subscribe((res: any) => {
-      this.videos = res.results;
-    });
+  getMovieVideos(id: number, mediaType: string) {
+    this._movieService
+      .getYouTubeTrailer(id, mediaType)
+      .subscribe((res: any) => {
+        this.videos = res.results;
+      });
   }
 
-  getMoviesBackdrop(id: number) {
-    this.apiService.getBackdrops(id, 'movie').subscribe((res: any) => {
+  getMoviesBackdrop(id: number, mediaType: string) {
+    this._movieService.getBackdrops(id, mediaType).subscribe((res: any) => {
       this.backdrops = res.backdrops;
       this.posters = [];
-      res.posters.forEach((poster: { file_path: string; }) => {
+      res.posters.forEach((poster: { file_path: string }) => {
         this.posters.push({
           ...poster,
-          full_path: `https://image.tmdb.org/t/p/w342${poster.file_path}`
+          full_path: `https://image.tmdb.org/t/p/w342${poster.file_path}`,
         });
       });
     });
   }
-
-  getMovieCast(id: number) {
-    this.apiService.getCredits(id, 'movie').subscribe(
+  getMovieCast(id: number, mediaType: string) {
+    this._movieService.getCredits(id, mediaType).subscribe(
       (res: any) => {
         this.cast_data = [];
         for (let item of res.cast) {
           this.cast_data.push({
             link: `/person/${item.id}`,
-            imgSrc: item.profile_path ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.profile_path}` : null,
+            imgSrc: item.profile_path
+              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.profile_path}`
+              : null,
             name: item.name,
             character: item.character,
             popularity: item.popularity,
           });
         }
       },
-      error => {
+      (error) => {
         console.error('Error fetching credits data', error);
       }
     );
   }
-
   getMovieRecommended(id: number, page: number) {
-    this.apiService.getRecommended(id, page, 'movie').subscribe(
+    this._movieService.getRecommended(id, page, 'movie').subscribe(
       (res: any) => {
         this.recom_data = res.results.map((item: any) => ({
           link: `/movie/${item.id}`,
-          imgSrc: item.poster_path ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}` : null,
+          imgSrc: item.poster_path
+            ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+            : null,
           title: item.title,
           vote: item.vote_average ? item.vote_average : 'N/A',
           rating: item.vote_average ? item.vote_average * 10 : 'N/A',
         }));
       },
-      error => {
+      (error) => {
         console.error('Error fetching recommended movies data', error);
       }
     );
-  } */
+  }
 }
