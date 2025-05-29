@@ -28,7 +28,7 @@ export class TvComponent {
     this.getTvDiscover(1);
     setTimeout(() => {
       this.spinner.hide();
-    }, 2000);
+    }, 4000);
   }
 
   loadMovies(): void {

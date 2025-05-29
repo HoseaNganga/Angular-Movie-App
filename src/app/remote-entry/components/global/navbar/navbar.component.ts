@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterModule, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,5 +10,17 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
-  query:string=''
+  private readonly router = inject(Router);
+  query: string = '';
+  handleSubmit(event: Event) {
+    event.preventDefault();
+    this.goToRoute();
+  }
+  goToRoute() {
+    if (this.query.trim()) {
+      this.router.navigate(['/search'], { queryParams: { query: this.query } });
+    } else {
+      this.router.navigate(['/home']);
+    }
+  }
 }

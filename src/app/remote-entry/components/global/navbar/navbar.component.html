@@ -1,6 +1,6 @@
 <nav class="navbar">
   <div class="flex justify-between items-center p-3">
-    <form class="relative">
+    <form class="relative" (ngSubmit)="handleSubmit($event)">
       <div class="absolute right-[20px] top-[8px]">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -24,6 +24,7 @@
         type="text"
         #input
         placeholder="Search.."
+        (keyup)="goToRoute()"
         name="search"
         class="border outline-none focus:border-[#a6db38] border-slate-600 text-[18px] search-input md:min-w-[500px] sm:min-w-[300px] rounded-lg ml-4 px-8 py-4 text-lg"
         [(ngModel)]="query"

@@ -51,4 +51,11 @@ export const remoteRoutes: Routes = [
         (m) => m.TvInfoComponent
       ),
   },
+  {
+    path: 'search',
+    loadComponent: () =>
+      import('./components/search/search.component').then(
+        (m) => m.SearchComponent
+      ),
+  },
 ];

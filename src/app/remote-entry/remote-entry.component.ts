@@ -43,6 +43,6 @@ export class RemoteEntryComponent implements OnInit {
 
     setTimeout(() => {
       this._ngxSpinnerService.hide();
-    }, 5000);
+    }, 3000);
   }
 }
