@@ -9,7 +9,7 @@ import { CarouselComponent } from '../global/carousel/carousel.component';
 @Component({
   selector: 'app-movies',
   templateUrl: './movies.component.html',
-  imports: [SliderComponent, CarouselComponent,RouterModule],
+  imports: [SliderComponent, CarouselComponent, RouterModule],
   styleUrls: ['./movies.component.scss'],
 })
 export class MoviesComponent implements OnInit {

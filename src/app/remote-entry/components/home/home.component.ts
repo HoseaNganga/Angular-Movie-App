@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MovieService } from '../../../services/movie.service';
-import { catchError, delay } from 'rxjs';
+import { delay } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { SliderComponent } from '../global/slider/slider.component';
 import { CarouselComponent } from '../global/carousel/carousel.component';
@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
     this.getTrending('tv', 1, 'tvShows');
     setTimeout(() => {
       this._NgxSpinnerService.hide();
-    }, 5000);
+    }, 4000);
   }
 
   getNowPlaying(mediaType: 'movie', page: number) {

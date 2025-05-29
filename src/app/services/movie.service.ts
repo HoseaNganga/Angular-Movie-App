@@ -9,7 +9,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 export class MovieService {
   private readonly _httpClientService = inject(HttpClient);
   private readonly _api_key = environment.apiKey;
-  private language = 'en-US';
+  private readonly language = 'en-US';
 
   getNowPlaying(mediaType: string, page: number): Observable<any> {
     const params = this.buildParams({ page: page.toString() });
@@ -90,6 +90,12 @@ export class MovieService {
     const params = this.buildParams({});
     return this._httpClientService
       .get(`api/tv/${id}/season/${season}`, { params })
+      .pipe(catchError(this.handleError));
+  }
+  search(query: string, page: number): Observable<any> {
+    const params = this.buildParams({ query, page: page.toString() });
+    return this._httpClientService
+      .get(`api/search/multi`, { params })
       .pipe(catchError(this.handleError));
   }
 
