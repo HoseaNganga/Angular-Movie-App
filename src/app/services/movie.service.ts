@@ -75,6 +75,23 @@ export class MovieService {
       { params }
     );
   }
+  getTvShows(page: number): Observable<any> {
+    const params = this.buildParams({ page: page.toString() });
+    return this._httpClientService
+      .get(`/api/discover/tv`, { params })
+      .pipe(catchError(this.handleError));
+  }
+  getTvShow(id: number): Observable<any> {
+    return this._httpClientService
+      .get(`api/tv/${id}`, { params: this.buildParams({}) })
+      .pipe(catchError(this.handleError));
+  }
+  getTvShowEpisodes(id: number, season: number): Observable<any> {
+    const params = this.buildParams({});
+    return this._httpClientService
+      .get(`api/tv/${id}/season/${season}`, { params })
+      .pipe(catchError(this.handleError));
+  }
 
   private buildParams(params: any): HttpParams {
     let httpParams = new HttpParams()
