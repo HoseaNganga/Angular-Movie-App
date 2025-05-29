@@ -32,4 +32,23 @@ export const remoteRoutes: Routes = [
         (m) => m.MoviesInfoComponent
       ),
   },
+  {
+    path: 'tv',
+    loadComponent: () =>
+      import('./components/tv/tv.component').then((m) => m.TvComponent),
+  },
+  {
+    path: 'tv/category/:category',
+    loadComponent: () =>
+      import('./components/tv-category/tv-category.component').then(
+        (m) => m.TvCategoryComponent
+      ),
+  },
+  {
+    path: 'tv/:id',
+    loadComponent: () =>
+      import('./components/tv-info/tv-info.component').then(
+        (m) => m.TvInfoComponent
+      ),
+  },
 ];
