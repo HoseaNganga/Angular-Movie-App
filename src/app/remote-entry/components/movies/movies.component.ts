@@ -1,10 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { delay } from 'rxjs/operators';
+import { delay, take, takeUntil } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { MovieService } from '../../../services/movie.service';
 import { SliderComponent } from '../global/slider/slider.component';
 import { CarouselComponent } from '../global/carousel/carousel.component';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-movies',
@@ -12,10 +13,11 @@ import { CarouselComponent } from '../global/carousel/carousel.component';
   imports: [SliderComponent, CarouselComponent, RouterModule],
   styleUrls: ['./movies.component.scss'],
 })
-export class MoviesComponent implements OnInit {
+export class MoviesComponent implements OnInit, OnDestroy {
   private readonly _movieService = inject(MovieService);
   private readonly route = inject(ActivatedRoute);
   private readonly _spinnerService = inject(NgxSpinnerService);
+  private readonly destroy$ = new Subject<void>();
   hero: any;
   movies_data: any[] = [];
 
@@ -38,7 +40,7 @@ export class MoviesComponent implements OnInit {
   getNowPlaying(page: number): void {
     this._movieService
       .getNowPlaying('movie', page)
-      .pipe(delay(2000))
+      .pipe(delay(2000), takeUntil(this.destroy$))
       .subscribe(
         (res: any) => {
           this.movies_data = res.results.map((item: any) => ({
@@ -60,22 +62,29 @@ export class MoviesComponent implements OnInit {
   }
 
   fetchMovies(category: string, property: string): void {
-    this._movieService.getCategory(category, 1, 'movie').subscribe(
-      (res) => {
-        this.movieCategories[property] = res.results.map((item: any) => ({
-          link: `/movie/${item.id}`,
-          linkExplorer: `/movie/category/${category}`,
-          imgSrc: item.poster_path
-            ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
-            : null,
-          title: item.title,
-          rating: item.vote_average * 10,
-          vote: item.vote_average,
-        }));
-      },
-      (error) => {
-        console.error(`Error fetching ${category} movies:`, error);
-      }
-    );
+    this._movieService
+      .getCategory(category, 1, 'movie')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (res) => {
+          this.movieCategories[property] = res.results.map((item: any) => ({
+            link: `/movie/${item.id}`,
+            linkExplorer: `/movie/category/${category}`,
+            imgSrc: item.poster_path
+              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+              : null,
+            title: item.title,
+            rating: item.vote_average * 10,
+            vote: item.vote_average,
+          }));
+        },
+        (error) => {
+          console.error(`Error fetching ${category} movies:`, error);
+        }
+      );
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
