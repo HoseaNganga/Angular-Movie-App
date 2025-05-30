@@ -1,10 +1,17 @@
-import { Component, OnInit, HostListener, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  inject,
+  OnDestroy,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../../../services/movie.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { CommonModule } from '@angular/common';
 import { ListingComponent } from '../global/listing/listing.component';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-movie-category',
@@ -12,10 +19,11 @@ import { ListingComponent } from '../global/listing/listing.component';
   imports: [CommonModule, ListingComponent],
   styleUrls: ['./movie-category.component.scss'],
 })
-export class MovieCategoryComponent implements OnInit {
+export class MovieCategoryComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
   private readonly _movieService = inject(MovieService);
   private readonly _spinnerService = inject(NgxSpinnerService);
+  private readonly destroy$ = new Subject<void>();
   category!: string;
   page: number = 1;
   isLoading: boolean = false;
@@ -48,29 +56,32 @@ export class MovieCategoryComponent implements OnInit {
     if (this.isLoading) return;
     this.isLoading = true;
 
-    this._movieService.getCategory(category, this.page, 'movie').subscribe(
-      (response) => {
-        const results = response.results;
-        for (const item of results) {
-          const movie = {
-            link: `/movie/${item.id}`,
-            imgSrc: item.poster_path
-              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
-              : null,
-            title: item.title,
-            rating: item.vote_average * 10,
-            vote: item.vote_average,
-          };
-          this.movieCategories[property].push(movie);
+    this._movieService
+      .getCategory(category, this.page, 'movie')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (response) => {
+          const results = response.results;
+          for (const item of results) {
+            const movie = {
+              link: `/movie/${item.id}`,
+              imgSrc: item.poster_path
+                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+                : null,
+              title: item.title,
+              rating: item.vote_average * 10,
+              vote: item.vote_average,
+            };
+            this.movieCategories[property].push(movie);
+          }
+          this.isLoading = false;
+          this.page++;
+        },
+        (error) => {
+          console.error(`Error fetching ${category} movies:`, error);
+          this.isLoading = false;
         }
-        this.isLoading = false;
-        this.page++;
-      },
-      (error) => {
-        console.error(`Error fetching ${category} movies:`, error);
-        this.isLoading = false;
-      }
-    );
+      );
   }
 
   getCategoryProperty(category: string): string {
@@ -99,5 +110,11 @@ export class MovieCategoryComponent implements OnInit {
     if (pos > max - 100) {
       this.loadCategoryMovies(this.category);
     }
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this._spinnerService.hide();
+    this.isLoading = false;
   }
 }
