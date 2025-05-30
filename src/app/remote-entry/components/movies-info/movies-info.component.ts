@@ -8,6 +8,7 @@ import { MediaComponent } from '../global/media/media.component';
 import { VideosComponent } from '../global/videos/videos.component';
 import { ImagesComponent } from '../global/images/images.component';
 import { CarouselComponent } from '../global/carousel/carousel.component';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-movies-info',
@@ -26,6 +27,7 @@ export class MoviesInfoComponent implements OnInit {
   private readonly _movieService = inject(MovieService);
   private readonly router = inject(ActivatedRoute);
   private readonly _spinnerService = inject(NgxSpinnerService);
+  private readonly destroy$ = new Subject<void>();
   id!: number;
   movie_data: any;
   external_data: any;
@@ -59,94 +61,119 @@ export class MoviesInfoComponent implements OnInit {
   }
 
   getMovieInfo(id: number) {
-    this._movieService.getMovie(id, 'movie').subscribe((result: any) => {
-      this.movie_data = result;
-      this._movieService.getYouTubeTrailer(id, 'movie').subscribe(
-        (videoRes: any) => {
-          const video = videoRes.results.find(
-            (vid: any) =>
-              vid.site === 'YouTube' &&
-              ['Trailer', 'Teaser', 'Clip'].includes(vid.type)
+    this._movieService
+      .getMovie(id, 'movie')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((result: any) => {
+        this.movie_data = result;
+        this._movieService
+          .getYouTubeTrailer(id, 'movie')
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(
+            (videoRes: any) => {
+              const video = videoRes.results.find(
+                (vid: any) =>
+                  vid.site === 'YouTube' &&
+                  ['Trailer', 'Teaser', 'Clip'].includes(vid.type)
+              );
+
+              if (video) {
+                this.movie_data.videoId = video.key;
+              } else {
+                console.warn(
+                  'No trailer or relevant video found for this movie.'
+                );
+              }
+            },
+            (videoError) => {
+              console.error('Error fetching YouTube video:', videoError);
+            }
           );
 
-          if (video) {
-            this.movie_data.videoId = video.key;
-          } else {
-            console.warn('No trailer or relevant video found for this movie.');
-          }
-        },
-        (videoError) => {
-          console.error('Error fetching YouTube video:', videoError);
-        }
-      );
-
-      this.getExternal(id, 'movie');
-    });
+        this.getExternal(id, 'movie');
+      });
   }
 
   getExternal(id: number, mediaType: string) {
-    this._movieService.getExternalId(id, mediaType).subscribe((res: any) => {
-      this.external_data = res;
-    });
+    this._movieService
+      .getExternalId(id, mediaType)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res: any) => {
+        this.external_data = res;
+      });
   }
 
   getMovieVideos(id: number, mediaType: string) {
     this._movieService
       .getYouTubeTrailer(id, mediaType)
+      .pipe(takeUntil(this.destroy$))
       .subscribe((res: any) => {
         this.videos = res.results;
       });
   }
 
   getMoviesBackdrop(id: number, mediaType: string) {
-    this._movieService.getBackdrops(id, mediaType).subscribe((res: any) => {
-      this.backdrops = res.backdrops;
-      this.posters = [];
-      res.posters.forEach((poster: { file_path: string }) => {
-        this.posters.push({
-          ...poster,
-          full_path: `https://image.tmdb.org/t/p/w342${poster.file_path}`,
+    this._movieService
+      .getBackdrops(id, mediaType)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res: any) => {
+        this.backdrops = res.backdrops;
+        this.posters = [];
+        res.posters.forEach((poster: { file_path: string }) => {
+          this.posters.push({
+            ...poster,
+            full_path: `https://image.tmdb.org/t/p/w342${poster.file_path}`,
+          });
         });
       });
-    });
   }
   getMovieCast(id: number, mediaType: string) {
-    this._movieService.getCredits(id, mediaType).subscribe(
-      (res: any) => {
-        this.cast_data = [];
-        for (let item of res.cast) {
-          this.cast_data.push({
-            link: `/person/${item.id}`,
-            imgSrc: item.profile_path
-              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.profile_path}`
-              : null,
-            name: item.name,
-            character: item.character,
-            popularity: item.popularity,
-          });
+    this._movieService
+      .getCredits(id, mediaType)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (res: any) => {
+          this.cast_data = [];
+          for (let item of res.cast) {
+            this.cast_data.push({
+              link: `/person/${item.id}`,
+              imgSrc: item.profile_path
+                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.profile_path}`
+                : null,
+              name: item.name,
+              character: item.character,
+              popularity: item.popularity,
+            });
+          }
+        },
+        (error) => {
+          console.error('Error fetching credits data', error);
         }
-      },
-      (error) => {
-        console.error('Error fetching credits data', error);
-      }
-    );
+      );
   }
   getMovieRecommended(id: number, page: number) {
-    this._movieService.getRecommended(id, page, 'movie').subscribe(
-      (res: any) => {
-        this.recom_data = res.results.map((item: any) => ({
-          link: `/movie/${item.id}`,
-          imgSrc: item.poster_path
-            ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
-            : null,
-          title: item.title,
-          vote: item.vote_average ? item.vote_average : 'N/A',
-          rating: item.vote_average ? item.vote_average * 10 : 'N/A',
-        }));
-      },
-      (error) => {
-        console.error('Error fetching recommended movies data', error);
-      }
-    );
+    this._movieService
+      .getRecommended(id, page, 'movie')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (res: any) => {
+          this.recom_data = res.results.map((item: any) => ({
+            link: `/movie/${item.id}`,
+            imgSrc: item.poster_path
+              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+              : null,
+            title: item.title,
+            vote: item.vote_average ? item.vote_average : 'N/A',
+            rating: item.vote_average ? item.vote_average * 10 : 'N/A',
+          }));
+        },
+        (error) => {
+          console.error('Error fetching recommended movies data', error);
+        }
+      );
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

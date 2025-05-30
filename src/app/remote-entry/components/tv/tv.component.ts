@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { MovieService } from '../../../services/movie.service';
-import { delay } from 'rxjs/operators';
+import { delay, takeUntil } from 'rxjs/operators';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { CarouselComponent } from '../global/carousel/carousel.component';
 import { SliderComponent } from '../global/slider/slider.component';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-tv',
@@ -11,9 +12,10 @@ import { SliderComponent } from '../global/slider/slider.component';
   imports: [SliderComponent, CarouselComponent],
   styleUrl: './tv.component.scss',
 })
-export class TvComponent {
+export class TvComponent implements OnDestroy {
   private readonly _movieService = inject(MovieService);
   private readonly spinner = inject(NgxSpinnerService);
+  private readonly destroy$ = new Subject<void>();
   tv_data: any[] = [];
   tvCategories: { [key: string]: any[] } = {
     onTheAirTv: [],
@@ -41,7 +43,7 @@ export class TvComponent {
   getTvDiscover(page: number) {
     this._movieService
       .getTvShows(page)
-      .pipe(delay(2000))
+      .pipe(delay(2000), takeUntil(this.destroy$))
       .subscribe(
         (res: any) => {
           this.tv_data = res.results.map((item: any) => {
@@ -51,22 +53,26 @@ export class TvComponent {
               videoId: '',
             };
 
-            this._movieService.getYouTubeTrailer(item.id, 'tv').subscribe(
-              (videoRes: any) => {
-                const video = videoRes.results.find(
-                  (vid: any) => vid.site === 'YouTube' && vid.type === 'Trailer'
-                );
-                if (video) {
-                  tvItem.videoId = video.key;
+            this._movieService
+              .getYouTubeTrailer(item.id, 'tv')
+              .pipe(takeUntil(this.destroy$))
+              .subscribe(
+                (videoRes: any) => {
+                  const video = videoRes.results.find(
+                    (vid: any) =>
+                      vid.site === 'YouTube' && vid.type === 'Trailer'
+                  );
+                  if (video) {
+                    tvItem.videoId = video.key;
+                  }
+                },
+                (videoError) => {
+                  console.error(
+                    'Error fetching YouTube video for TV:',
+                    videoError
+                  );
                 }
-              },
-              (videoError) => {
-                console.error(
-                  'Error fetching YouTube video for TV:',
-                  videoError
-                );
-              }
-            );
+              );
 
             return tvItem;
           });
@@ -78,21 +84,28 @@ export class TvComponent {
   }
 
   fetchMovies(category: string, property: string): void {
-    this._movieService.getCategory(category, 1, 'tv').subscribe(
-      (response) => {
-        this.tvCategories[property] = response.results.map((item: any) => ({
-          link: `/tv/${item.id}`,
-          imgSrc: item.poster_path
-            ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
-            : null,
-          title: item.name,
-          rating: item.vote_average * 10,
-          vote: item.vote_average,
-        }));
-      },
-      (error) => {
-        console.error(`Error fetching ${category} movies:`, error);
-      }
-    );
+    this._movieService
+      .getCategory(category, 1, 'tv')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (response) => {
+          this.tvCategories[property] = response.results.map((item: any) => ({
+            link: `/tv/${item.id}`,
+            imgSrc: item.poster_path
+              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+              : null,
+            title: item.name,
+            rating: item.vote_average * 10,
+            vote: item.vote_average,
+          }));
+        },
+        (error) => {
+          console.error(`Error fetching ${category} movies:`, error);
+        }
+      );
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
