@@ -13,6 +13,7 @@ import { TruncatePipe } from '../pipes/Truncate/truncate.pipe';
 import { NumberWithCommasPipe } from '../pipes/NumberWithCommas/numberwithcommas.pipe';
 import { MovieService } from '../../../../services/movie.service';
 import { ModalComponent } from '../modal/modal.component';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-slider',
@@ -41,6 +42,7 @@ export class SliderComponent implements OnInit, OnDestroy {
   private readonly _movieService = inject(MovieService);
   current = 0;
   private intervalId: any;
+  private readonly destroy$ = new Subject<void>();
 
   ngOnInit(): void {
     this.sliderTimer();
@@ -54,29 +56,34 @@ export class SliderComponent implements OnInit, OnDestroy {
 
   openTrailer(hero: any) {
     const mediaType = hero.number_of_seasons ? 'tv' : 'movie';
-    this._movieService.getYouTubeTrailer(hero.id, mediaType).subscribe(
-      (res: any) => {
-        const video = res.results.find(
-          (vid: any) =>
-            vid.site === 'YouTube' &&
-            ['Trailer', 'Teaser', 'Clip'].includes(vid.type)
-        );
-        if (video) {
-          const videoUrl = `https://www.youtube.com/embed/${video.key}?rel=0&autoplay=1&mute=1`;
-          this.modal.openModal(videoUrl);
-        } else {
-          console.error('No trailer or relevant video found for this media.');
-          alert('No trailer or video available for this TV show.');
+    this._movieService
+      .getYouTubeTrailer(hero.id, mediaType)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (res: any) => {
+          const video = res.results.find(
+            (vid: any) =>
+              vid.site === 'YouTube' &&
+              ['Trailer', 'Teaser', 'Clip'].includes(vid.type)
+          );
+          if (video) {
+            const videoUrl = `https://www.youtube.com/embed/${video.key}?rel=0&autoplay=1&mute=1`;
+            this.modal.openModal(videoUrl);
+          } else {
+            console.error('No trailer or relevant video found for this media.');
+            alert('No trailer or video available for this TV show.');
+          }
+        },
+        (error) => {
+          console.error('Error fetching YouTube video:', error);
         }
-      },
-      (error) => {
-        console.error('Error fetching YouTube video:', error);
-      }
-    );
+      );
   }
   ngOnDestroy(): void {
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
