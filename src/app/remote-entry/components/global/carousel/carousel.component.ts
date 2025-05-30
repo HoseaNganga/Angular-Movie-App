@@ -43,9 +43,10 @@ export class CarouselComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private routerSubscription!: Subscription;
   private readonly _routerService = inject(Router);
+  private readonly boundUpdateNavigation = this.updateNavigation.bind(this);
 
   constructor() {
-    window.addEventListener('resize', this.updateNavigation.bind(this));
+    window.addEventListener('resize', this.boundUpdateNavigation);
   }
 
   ngAfterViewInit() {
@@ -123,6 +124,6 @@ export class CarouselComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (this.routerSubscription) {
       this.routerSubscription.unsubscribe();
     }
-    window.removeEventListener('resize', this.updateNavigation.bind(this));
+    window.removeEventListener('resize', this.boundUpdateNavigation);
   }
 }
