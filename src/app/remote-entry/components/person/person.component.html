@@ -1,0 +1,44 @@
+<div class="spacing">
+  <app-media
+    class="info"
+    [data]="person_data"
+    [externalData]="external_data"
+    type="person"
+  ></app-media>
+</div>
+
+<div class="nav">
+  <button
+    type="button"
+    id="knownfor"
+    class="buttonTab"
+    [class.buttonActive]="activeTab === 'knownfor'"
+    (click)="setActiveTab('knownfor')"
+  >
+    Known For
+  </button>
+
+  <button
+    type="button"
+    id="poster"
+    class="buttonTab"
+    [class.buttonActive]="activeTab === 'poster'"
+    (click)="setActiveTab('poster')"
+  >
+    Photos
+  </button>
+</div>
+
+@if(activeTab === 'knownfor' || activeTab === 'poster') {
+<div id="knownfor">
+  <div class="spacing">
+    <app-listing [items]="knownfor | sortByYear : 'year'"></app-listing>
+  </div>
+</div>
+} @if(activeTab === 'poster') {
+<div id="posters">
+  <div class="spacing">
+    <app-images [posters]="posters"></app-images>
+  </div>
+</div>
+}
