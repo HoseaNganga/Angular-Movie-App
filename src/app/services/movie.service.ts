@@ -92,6 +92,32 @@ export class MovieService {
       .get(`api/tv/${id}/season/${season}`, { params })
       .pipe(catchError(this.handleError));
   }
+
+  getPerson(id: number): Observable<any> {
+    const params = this.buildParams({});
+    return this._httpClientService
+      .get(`api/person/${id}`, { params })
+      .pipe(catchError(this.handleError));
+  }
+  getPersonImages(id: number): Observable<any> {
+    const params = this.buildParams({});
+    return this._httpClientService
+      .get(`api/person/${id}/images`, { params })
+      .pipe(catchError(this.handleError));
+  }
+
+  getPersonCredit(id: number): Observable<any> {
+    const params = this.buildParams({});
+    return this._httpClientService
+      .get(`api/person/${id}/movie_credits`, { params })
+      .pipe(catchError(this.handleError));
+  }
+
+  getPersonExternalId(id: number): Observable<any> {
+    return this._httpClientService
+      .get(`api/person/${id}/external_ids`, { params: this.buildParams({}) })
+      .pipe(catchError(this.handleError));
+  }
   search(query: string, page: number): Observable<any> {
     const params = this.buildParams({ query, page: page.toString() });
     return this._httpClientService
