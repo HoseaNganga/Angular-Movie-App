@@ -1,0 +1,83 @@
+<div class="spacing mt-4">
+  <div class="listing__head">
+    <h2 class="listing__title" style="margin-top: 1rem">Filter By Genre</h2>
+  </div>
+  <div class="flex justify-start items-center gap-6">
+    <div class="flex flex-col gap-2">
+      <h3 class="text-3xl">Movie Genres:</h3>
+      <select (change)="onGenreChange($event, 'movie')">
+        <option *ngFor="let genre of movieGenreList" [value]="genre.id">
+          {{ genre.name }}
+        </option>
+      </select>
+    </div>
+    <div class="flex flex-col gap-2">
+      <h3 class="text-3xl">Tv Shows Genres:</h3>
+      <select (change)="onGenreChange($event, 'tv')">
+        <option *ngFor="let genre of tvShowsGenreList" [value]="genre.id">
+          {{ genre.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <app-listing [items]="genre_data"> </app-listing>
+  @if(isLoading){
+  <div class="infinite-scroll-loading">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="60"
+      height="60"
+      viewBox="0 0 44 44"
+      stroke="#a6db38"
+    >
+      <g fill="none" fill-rule="evenodd" stroke-width="2">
+        <circle cx="22" cy="22" r="1">
+          <animate
+            attributeName="r"
+            begin="0s"
+            dur="1.8s"
+            values="1; 20"
+            calcMode="spline"
+            keyTimes="0; 1"
+            keySplines="0.165, 0.84, 0.44, 1"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="stroke-opacity"
+            begin="0s"
+            dur="1.8s"
+            values="1; 0"
+            calcMode="spline"
+            keyTimes="0; 1"
+            keySplines="0.3, 0.61, 0.355, 1"
+            repeatCount="indefinite"
+          />
+        </circle>
+        <circle cx="22" cy="22" r="1">
+          <animate
+            attributeName="r"
+            begin="-0.9s"
+            dur="1.8s"
+            values="1; 20"
+            calcMode="spline"
+            keyTimes="0; 1"
+            keySplines="0.165, 0.84, 0.44, 1"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="stroke-opacity"
+            begin="-0.9s"
+            dur="1.8s"
+            values="1; 0"
+            calcMode="spline"
+            keyTimes="0; 1"
+            keySplines="0.3, 0.61, 0.355, 1"
+            repeatCount="indefinite"
+          />
+        </circle>
+      </g>
+    </svg>
+  </div>
+
+  }
+</div>
