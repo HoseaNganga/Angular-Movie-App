@@ -282,6 +282,7 @@ describe('SearchComponent', () => {
     expect(console.error).toHaveBeenCalledWith('Search failed', error);
   });
 
+
   it('should handle mixed media types in search results', () => {
     mockMovieService.search.mockReturnValue(of(mockSearchResponse));
 
@@ -324,6 +325,7 @@ describe('SearchComponent', () => {
     const takeUntilSpy = jest.spyOn(mockObservable, 'pipe');
 
     mockMovieService.search.mockReturnValue(mockObservable);
+
 
     component.performSearch('test');
     component.ngOnDestroy();
