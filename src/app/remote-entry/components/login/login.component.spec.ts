@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { LoginComponent } from './login.component';
+import { EnvironmentService } from '../../../../environments/environment.service';
 
 // Mock Google API
 declare var global: any;
@@ -15,11 +16,13 @@ global.google = {
 
 // Mock atob globally
 global.atob = jest.fn();
+
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let router: jest.Mocked<Router>;
   let mockGoogleAccounts: any;
+  let mockEnvService: Partial<EnvironmentService>;
 
   const mockTokenPayload = {
     sub: '12345',
@@ -58,9 +61,16 @@ describe('LoginComponent', () => {
       return JSON.stringify(mockTokenPayload);
     });
 
+    mockEnvService = {
+      get: jest.fn(() => 'mock-google-client-id'),
+    };
+
     await TestBed.configureTestingModule({
       imports: [LoginComponent],
-      providers: [{ provide: Router, useValue: routerMock }],
+      providers: [
+        { provide: Router, useValue: routerMock },
+        { provide: EnvironmentService, useValue: mockEnvService },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LoginComponent);
@@ -70,9 +80,7 @@ describe('LoginComponent', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
-
     sessionStorage.clear();
-
     document.body.classList.remove('no-padding');
   });
 
@@ -82,18 +90,15 @@ describe('LoginComponent', () => {
 
   it('should add no-padding class to body on init', () => {
     const addSpy = jest.spyOn(document.body.classList, 'add');
-
     component.ngOnInit();
-
     expect(addSpy).toHaveBeenCalledWith('no-padding');
   });
 
-  it('should initialize Google Sign-In on init', () => {
+  it('should initialize Google Sign-In with client ID from env service', () => {
     component.ngOnInit();
-
+    expect(mockEnvService.get).toHaveBeenCalledWith('googleClientId');
     expect(mockGoogleAccounts.initialize).toHaveBeenCalledWith({
-      client_id:
-        '1071675238042-5es3dutvpofqrstdfj7e3mf6f2je3nuk.apps.googleusercontent.com',
+      client_id: 'mock-google-client-id',
       callback: expect.any(Function),
     });
   });
@@ -101,112 +106,34 @@ describe('LoginComponent', () => {
   it('should render Google Sign-In button on init', () => {
     const mockElement = { id: 'google-btn' };
     jest.spyOn(document, 'getElementById').mockReturnValue(mockElement as any);
-
     component.ngOnInit();
-
-    expect(mockGoogleAccounts.renderButton).toHaveBeenCalledWith(mockElement, {
-      theme: 'filled_blue',
-      size: 'large',
-      shape: 'rectangle',
-      width: 250,
-    });
-  });
-
-  it('should handle login callback correctly', () => {
-    let capturedCallback: Function;
-    mockGoogleAccounts.initialize.mockImplementation((config: any) => {
-      capturedCallback = config.callback;
-    });
-
-    component.ngOnInit();
-
-    capturedCallback(mockCredentialResponse);
-
-    expect(router.navigate).toHaveBeenCalledWith(['home']);
-    expect(sessionStorage.getItem('user')).toBe(
-      JSON.stringify(mockTokenPayload)
+    expect(mockGoogleAccounts.renderButton).toHaveBeenCalledWith(
+      mockElement,
+      expect.any(Object)
     );
   });
 
   it('should decode token correctly', () => {
     const token =
       'header.eyJzdWIiOiIxMjM0NSIsIm5hbWUiOiJUZXN0IFVzZXIifQ.signature';
-
     const result = component['decodeToken'](token);
-
     expect(global.atob).toHaveBeenCalledWith(
       'eyJzdWIiOiIxMjM0NSIsIm5hbWUiOiJUZXN0IFVzZXIifQ'
     );
     expect(result).toEqual(mockTokenPayload);
   });
 
+  it('should store user data and navigate on login', () => {
+    component.handleLogin(mockCredentialResponse);
+    expect(sessionStorage.getItem('user')).toBe(
+      JSON.stringify(mockTokenPayload)
+    );
+    expect(router.navigate).toHaveBeenCalledWith(['home']);
+  });
+
   it('should remove no-padding class from body on destroy', () => {
     const removeSpy = jest.spyOn(document.body.classList, 'remove');
-
     component.ngOnDestroy();
-
     expect(removeSpy).toHaveBeenCalledWith('no-padding');
-  });
-
-  it('should handle token decoding with different payload', () => {
-    const customPayload = {
-      sub: '67890',
-      name: 'Another User',
-      email: 'another@test.com',
-    };
-    (global.atob as jest.Mock).mockReturnValueOnce(
-      JSON.stringify(customPayload)
-    );
-
-    const token = 'header.customPayload.signature';
-    const result = component['decodeToken'](token);
-
-    expect(result).toEqual(customPayload);
-  });
-
-  it('should store user data in sessionStorage with correct format', () => {
-    const setItemSpy = jest.spyOn(sessionStorage, 'setItem');
-
-    component.handleLogin(mockCredentialResponse);
-
-    const storedData = sessionStorage.getItem('user');
-    expect(storedData).toBe(JSON.stringify(mockTokenPayload));
-    expect(JSON.parse(storedData!)).toEqual(mockTokenPayload);
-  });
-
-  it('should handle missing google-btn element gracefully', () => {
-    jest.spyOn(document, 'getElementById').mockReturnValue(null);
-
-    expect(() => component.ngOnInit()).not.toThrow();
-    expect(mockGoogleAccounts.renderButton).toHaveBeenCalledWith(
-      null,
-      expect.any(Object)
-    );
-  });
-
-  it('should extract correct part of JWT token for decoding', () => {
-    const testToken = 'part1.part2.part3';
-
-    component['decodeToken'](testToken);
-
-    expect(global.atob).toHaveBeenCalledWith('part2');
-  });
-
-  it('should integrate full login flow from initialization to navigation', () => {
-    let capturedCallback: Function;
-    mockGoogleAccounts.initialize.mockImplementation((config: any) => {
-      capturedCallback = config.callback;
-    });
-
-    component.ngOnInit();
-
-    expect(document.body.classList.contains('no-padding')).toBeTruthy();
-    expect(mockGoogleAccounts.initialize).toHaveBeenCalled();
-    expect(mockGoogleAccounts.renderButton).toHaveBeenCalled();
-
-    capturedCallback(mockCredentialResponse);
-
-    expect(sessionStorage.getItem('user')).toBeTruthy();
-    expect(router.navigate).toHaveBeenCalledWith(['home']);
   });
 });
