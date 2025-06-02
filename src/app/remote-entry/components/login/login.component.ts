@@ -1,6 +1,7 @@
 declare var google: any;
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { EnvironmentService } from '../../../../environments/environment.service';
 
 @Component({
   selector: 'app-login',
@@ -10,11 +11,12 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   private readonly router = inject(Router);
+  private readonly _envService = inject(EnvironmentService);
+  private readonly googleClientId = this._envService.get('googleClientId');
   ngOnInit(): void {
     document.body.classList.add('no-padding');
     google.accounts.id.initialize({
-      client_id:
-        '1071675238042-5es3dutvpofqrstdfj7e3mf6f2je3nuk.apps.googleusercontent.com',
+      client_id: this.googleClientId,
       callback: (response: any) => {
         this.handleLogin(response);
       },

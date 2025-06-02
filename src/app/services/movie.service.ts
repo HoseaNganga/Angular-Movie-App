@@ -1,14 +1,15 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { environment } from '../../environments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
+import { EnvironmentService } from '../../environments/environment.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieService {
   private readonly _httpClientService = inject(HttpClient);
-  private readonly _api_key = environment.apiKey;
+  private readonly _envService = inject(EnvironmentService);
+  private readonly _api_key = this._envService.get('apiKey');
   private readonly language = 'en-US';
 
   getNowPlaying(mediaType: string, page: number): Observable<any> {
