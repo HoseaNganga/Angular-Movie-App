@@ -1,4 +1,10 @@
-import { Component, HostListener, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MovieService } from '../../../services/movie.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -12,7 +18,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
   templateUrl: './genre.component.html',
   styleUrl: './genre.component.scss',
 })
-export class GenreComponent implements OnInit {
+export class GenreComponent implements OnInit, OnDestroy {
   movieGenreList: any[] = [];
   tvShowsGenreList: any[] = [];
   defaultMovieGenre: string = 'Action';
@@ -109,5 +115,10 @@ export class GenreComponent implements OnInit {
     if (pos > max - 100) {
       this.getGenreById(this.defaultId, this.defaultMediaType, this.page);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
