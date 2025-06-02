@@ -8,6 +8,7 @@ import {
   SimpleChanges,
   OnDestroy,
   inject,
+  AfterViewChecked,
 } from '@angular/core';
 import { trigger, transition, animate, style } from '@angular/animations';
 import { Subscription } from 'rxjs';
@@ -29,7 +30,9 @@ import { CommonModule } from '@angular/common';
     ]),
   ],
 })
-export class CarouselComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class CarouselComponent
+  implements AfterViewInit, OnChanges, OnDestroy, AfterViewChecked
+{
   @Input() title!: string;
   @Input() exploreLink!: string;
   @Input() items: any[] = [];
@@ -44,17 +47,21 @@ export class CarouselComponent implements AfterViewInit, OnChanges, OnDestroy {
   private routerSubscription!: Subscription;
   private readonly _routerService = inject(Router);
   private readonly boundUpdateNavigation = this.updateNavigation.bind(this);
+  private initialized = false;
 
   constructor() {
     window.addEventListener('resize', this.boundUpdateNavigation);
   }
 
-  ngAfterViewInit() {
-    setTimeout(() => {
+  ngAfterViewChecked() {
+    if (!this.initialized && this.items.length > 0 && this.carouselContainer) {
       this.resetCarousel();
       this.updateNavigation();
-    }, 300);
+      this.initialized = true;
+    }
+  }
 
+  ngAfterViewInit() {
     this.routerSubscription = this._routerService.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.resetCarousel();
