@@ -58,4 +58,18 @@ export const remoteRoutes: Routes = [
         (m) => m.SearchComponent
       ),
   },
+  {
+    path: 'person/:id',
+    loadComponent: () =>
+      import('./components/person/person.component').then(
+        (m) => m.PersonComponent
+      ),
+  },
+  {
+    path: 'genre',
+    loadComponent: () =>
+      import('./components/genre/genre.component').then(
+        (m) => m.GenreComponent
+      ),
+  },
 ];
