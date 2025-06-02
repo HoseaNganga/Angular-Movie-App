@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test:full": "JEST_FULL=true ng test",
+    "test:all": "JEST_FULL=true ng test",
     "test": "jest"
   },
   "private": true,
