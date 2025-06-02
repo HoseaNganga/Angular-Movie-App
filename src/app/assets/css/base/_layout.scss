@@ -3,6 +3,9 @@
 @media (min-width: $breakpoint-large) {
   body {
     padding-left: 10rem;
+    &.no-padding {
+      padding-left: 0;
+    }
   }
 }
 
