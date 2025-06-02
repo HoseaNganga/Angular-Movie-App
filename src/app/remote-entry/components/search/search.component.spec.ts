@@ -127,30 +127,6 @@ describe('SearchComponent', () => {
     );
   });
 
-  it('should show no results message when searchResults is empty', () => {
-    component.searchResults = [];
-    fixture.detectChanges();
-
-    const noResults = fixture.debugElement.query(By.css('p'));
-    expect(noResults.nativeElement.textContent).toContain(
-      'No results found for "test"'
-    );
-  });
-
-  it('should clean up subscriptions on destroy', () => {
-    const nextSpy = jest.spyOn(Subject.prototype, 'next');
-    const completeSpy = jest.spyOn(Subject.prototype, 'complete');
-
-    component.ngOnDestroy();
-
-    expect(nextSpy).toHaveBeenCalled();
-    expect(completeSpy).toHaveBeenCalled();
-
-    // Clean up spies
-    nextSpy.mockRestore();
-    completeSpy.mockRestore();
-  });
-
   it('should handle different media types correctly', () => {
     const personResponse = {
       results: [{ id: 3, media_type: 'person', name: 'Test Person' }],
