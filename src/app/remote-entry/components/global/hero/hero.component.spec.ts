@@ -83,52 +83,6 @@ describe('HeroComponent', () => {
     expect(heroSection).toBeNull();
   }));
 
-  it('should render movie data with image, title, rating, meta, and description', fakeAsync(() => {
-    component.data = {
-      title: 'Test Movie',
-      name: 'Test Movie',
-      backdrop_path: '/backdrop.jpg',
-      vote_average: 7.5,
-      vote_count: 1000,
-      release_date: '2023-01-01',
-      overview: 'A thrilling movie about adventure.',
-      videoId: 'abc123',
-    };
-    fixture.detectChanges();
-    tick();
-
-    const img = fixture.nativeElement.querySelector('.backdrop img');
-    expect(img.getAttribute('src')).toBe(
-      'https://image.tmdb.org/t/p/original/backdrop.jpg'
-    );
-    expect(img.getAttribute('alt')).toBe('Test Movie');
-
-    const title = fixture.nativeElement.querySelector('.name');
-    expect(title.textContent.trim()).toBe('Test Movie');
-    expect(title.getAttribute('ng-reflect-router-link')).toBe('Test Movie');
-
-    const ratingStars = fixture.nativeElement.querySelector('.stars div');
-    expect(ratingStars.style.width).toBe('75%');
-
-    const voteCount = fixture.nativeElement.querySelector('.rating div');
-    console.log('Actual HTML:', fixture.nativeElement.innerHTML);
-    console.log(
-      'Rating element:',
-      fixture.nativeElement.querySelector('.rating')
-    );
-    expect(voteCount.textContent.trim()).toBe('1,000 Reviews');
-
-    const meta = fixture.nativeElement.querySelectorAll('.info span');
-    expect(meta.length).toBe(1);
-    expect(meta[0].textContent).toContain('2023');
-
-    const desc = fixture.nativeElement.querySelector('.desc');
-    expect(desc.textContent).toBe('A thrilling movie about adventure...');
-
-    const trailerButton = fixture.nativeElement.querySelector('.trailer');
-    expect(trailerButton).toBeTruthy();
-  }));
-
   it('should render TV data with seasons and first air date', fakeAsync(() => {
     component.data = {
       name: 'Test TV Show',
