@@ -85,49 +85,51 @@ export class MovieService {
   }
   getTvShow(id: number): Observable<any> {
     return this._httpClientService
-      .get(`api/tv/${id}`, { params: this.buildParams({}) })
+      .get(`${this.baseUrl}/tv/${id}`, { params: this.buildParams({}) })
       .pipe(catchError(this.handleError));
   }
   getTvShowEpisodes(id: number, season: number): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`api/tv/${id}/season/${season}`, { params })
+      .get(`${this.baseUrl}/tv/${id}/season/${season}`, { params })
       .pipe(catchError(this.handleError));
   }
 
   getPerson(id: number): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`api/person/${id}`, { params })
+      .get(`${this.baseUrl}//person/${id}`, { params })
       .pipe(catchError(this.handleError));
   }
   getPersonImages(id: number): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`api/person/${id}/images`, { params })
+      .get(`${this.baseUrl}//person/${id}/images`, { params })
       .pipe(catchError(this.handleError));
   }
 
   getPersonCredit(id: number): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`api/person/${id}/movie_credits`, { params })
+      .get(`${this.baseUrl}//person/${id}/movie_credits`, { params })
       .pipe(catchError(this.handleError));
   }
 
   getPersonExternalId(id: number): Observable<any> {
     return this._httpClientService
-      .get(`api/person/${id}/external_ids`, { params: this.buildParams({}) })
+      .get(`${this.baseUrl}//person/${id}/external_ids`, {
+        params: this.buildParams({}),
+      })
       .pipe(catchError(this.handleError));
   }
   getMovieGenres(): Observable<any> {
     return this._httpClientService
-      .get(`api/genre/movie/list?language=en`)
+      .get(`${this.baseUrl}//genre/movie/list?language=en`)
       .pipe(catchError(this.handleError));
   }
   getTvGenres(): Observable<any> {
     return this._httpClientService
-      .get(`api/genre/tv/list?language=en`)
+      .get(`${this.baseUrl}//genre/tv/list?language=en`)
       .pipe(catchError(this.handleError));
   }
 
@@ -138,13 +140,13 @@ export class MovieService {
       page: page.toString(),
     });
     return this._httpClientService
-      .get(`api/discover/${type}?`, { params })
+      .get(`${this.baseUrl}//discover/${type}?`, { params })
       .pipe(catchError(this.handleError));
   }
   search(query: string, page: number): Observable<any> {
     const params = this.buildParams({ query, page: page.toString() });
     return this._httpClientService
-      .get(`api/search/multi`, { params })
+      .get(`${this.baseUrl}//search/multi`, { params })
       .pipe(catchError(this.handleError));
   }
 
