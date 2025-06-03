@@ -58,7 +58,7 @@ MovieFlix is a modern, responsive web application built with Angular, designed t
 
 ## 🛠 Tech Stack
 
-- **Framework**: Angular (vX)
+- **Framework**: Angular
 - **State & Events**: RxJS, Observables
 - **Animations**: Angular Animations API
 - **HTTP**: Angular HttpClient
@@ -105,7 +105,7 @@ npm install
 ng serve
 ```
 
-Open [http://localhost:4000](http://localhost:4000) with your browser to see the result.
+Open [http://localhost:4200](http://localhost:4200) with your browser to see the result.
 
 ## Contributing
 
