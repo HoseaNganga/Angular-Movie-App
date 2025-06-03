@@ -1,5 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestBed, ComponentFixture } from '@angular/core/testing';
+import { RouterModule } from '@angular/router';
 import { RemoteEntryComponent } from './remote-entry.component';
 
 describe('RemoteEntryComponent', () => {
@@ -8,16 +8,14 @@ describe('RemoteEntryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RemoteEntryComponent]
-    })
-    .compileComponents();
+      imports: [RouterModule.forRoot([]), RemoteEntryComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(RemoteEntryComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 });

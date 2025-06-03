@@ -1,0 +1,11 @@
+@if(isVisible){
+<div class="modal-backdrop" (click)="closeModal()"></div>
+} @if(isVisible){
+<div class="modal-content">
+  @if(videoUrl){
+  <iframe [src]="videoUrl | safeUrl" frameborder="0" allowfullscreen> </iframe>
+  }
+
+  <button (click)="closeModal()" class="close-button">X</button>
+</div>
+}
