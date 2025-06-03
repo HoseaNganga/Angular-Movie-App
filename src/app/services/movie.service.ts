@@ -11,24 +11,25 @@ export class MovieService {
   private readonly _envService = inject(EnvironmentService);
   private readonly _api_key = this._envService.get('apiKey');
   private readonly language = 'en-US';
+  private readonly baseUrl = 'https://api.themoviedb.org/3';
 
   getNowPlaying(mediaType: string, page: number): Observable<any> {
     const params = this.buildParams({ page: page.toString() });
     return this._httpClientService
-      .get(`/api/${mediaType}/now_playing`, { params })
+      .get(`${this.baseUrl}/${mediaType}/now_playing`, { params })
       .pipe(catchError(this.handleError));
   }
 
   getYouTubeTrailer(id: number, mediaType: string): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`/api/${mediaType}/${id}/videos`, { params })
+      .get(`${this.baseUrl}/${mediaType}/${id}/videos`, { params })
       .pipe(catchError(this.handleError));
   }
   getTrending(media: string, page: number): Observable<any> {
     const params = this.buildParams({ page: page.toString() });
     return this._httpClientService
-      .get(`/api/trending/${media}/week`, { params })
+      .get(`${this.baseUrl}/trending/${media}/week`, { params })
       .pipe(catchError(this.handleError));
   }
 
@@ -39,47 +40,47 @@ export class MovieService {
   ): Observable<any> {
     const params = this.buildParams({ page: page.toString() });
     return this._httpClientService
-      .get(`/api/${mediaType}/${category}`, { params })
+      .get(`${this.baseUrl}/${mediaType}/${category}`, { params })
       .pipe(catchError(this.handleError));
   }
 
   getMovie(id: number, mediaType: string): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`/api/${mediaType}/${id}`, { params })
+      .get(`${this.baseUrl}/${mediaType}/${id}`, { params })
       .pipe(catchError(this.handleError));
   }
 
   getExternalId(id: number, mediaType: string): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`/api/${mediaType}/${id}/external_ids`, { params })
+      .get(`${this.baseUrl}/${mediaType}/${id}/external_ids`, { params })
       .pipe(catchError(this.handleError));
   }
 
   getBackdrops(id: number, mediaType: string): Observable<any> {
     return this._httpClientService.get(
-      `/api/${mediaType}/${id}/images?api_key=${this._api_key}`
+      `${this.baseUrl}/${mediaType}/${id}/images?api_key=${this._api_key}`
     );
   }
 
   getCredits(id: number, type: string): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`/api/${type}/${id}/credits`, { params })
+      .get(`${this.baseUrl}/${type}/${id}/credits`, { params })
       .pipe(catchError(this.handleError));
   }
   getRecommended(id: number, page: number, mediaType: string): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService.get(
-      `/api/${mediaType}/${id}/recommendations`,
+      `${this.baseUrl}/${mediaType}/${id}/recommendations`,
       { params }
     );
   }
   getTvShows(page: number): Observable<any> {
     const params = this.buildParams({ page: page.toString() });
     return this._httpClientService
-      .get(`/api/discover/tv`, { params })
+      .get(`${this.baseUrl}/discover/tv`, { params })
       .pipe(catchError(this.handleError));
   }
   getTvShow(id: number): Observable<any> {
@@ -163,5 +164,3 @@ export class MovieService {
     return throwError(() => new Error('Something went wrong'));
   }
 }
-
-/* eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiYzkyNmFmMmFhMzQ1MWRlZTk2MGQzYjIxMDJlYmVhYSIsIm5iZiI6MTc0ODI3MDY0NC4wNTYsInN1YiI6IjY4MzQ3ZTM0MDhiNTkwN2NkODczMDIxOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.r2afHRsRlsUmaf0-6XyuwyboeTCAkXlxGGfutbuJlHc */
