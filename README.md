@@ -8,9 +8,11 @@
 
 </div>
 <div align='center'>
-<img src='./src/app/assets/images/Angular_Movie_App-1024.jpeg'/>
+<img src='./src/app/assets/images/Angular_Movie_App-1024.jpeg' width="800" />
+<br/>
 <a href='http://angular-movie.s3-website.eu-north-1.amazonaws.com' target='_blank' > View Live App</a>
 </div>
+
 # 🎬 MovieFlix App(Angular)
 
 MovieFlix is a modern, responsive web application built with Angular, designed to deliver a seamless and engaging experience for movie enthusiasts. It allows users to browse, search, and explore movie details, leveraging cutting-edge Angular features and optimizations for performance and scalability.
@@ -69,7 +71,16 @@ MovieFlix is a modern, responsive web application built with Angular, designed t
 
 ## Test
 
-<img src="./src/app/assets/images/Screenshot 2025-06-03 at 08.45.57.png" width="600"/>
+<img src="./src/app/assets/images/Screenshot 2025-06-03 at 08.45.57.png" width="800"/>
+<br/>
+
+This project uses Jest (instead of Karma) for unit testing in Angular. One of the core challenges I faced was enabling flexible test execution—being able to run tests individually during development and also support full test suite runs for CI/CD pipelines. To achieve that flexibility, I introduced an environment-aware setup in jest.config.js.
+
+### 🧪 How to Use
+
+- npm run test – Run selected or focused tests.
+
+- npm run test:all – Execute the complete suite.
 
 ## Github Action (CI/CD)
 
