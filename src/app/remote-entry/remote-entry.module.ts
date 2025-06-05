@@ -13,7 +13,10 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     BrowserAnimationsModule,
     CommonModule,
     NgxSpinnerModule,
-    RouterModule.forRoot(remoteRoutes, { onSameUrlNavigation: 'reload' }),
+    RouterModule.forRoot(remoteRoutes, {
+      onSameUrlNavigation: 'reload',
+      initialNavigation: 'enabledBlocking',
+    }),
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
