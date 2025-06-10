@@ -8,9 +8,9 @@
 
 </div>
 <div align='center'>
-<img src='./src/app/assets/images/Angular_Movie_App-1024.jpeg' width="800" />
+<img src='./src/app/assets/images/Angular_Movie_App-1024.jpeg' width="400" height="400" />
 <br/>
-<a href='http://angular-movie.s3-website.eu-north-1.amazonaws.com' target='_blank' > View Live App</a>
+<a href='https://angularmovieapp-67b0c.web.app' target='_blank' > View Live App</a>
 </div>
 
 # 🎬 MovieFlix App(Angular)
@@ -28,8 +28,7 @@ MovieFlix is a modern, responsive web application built with Angular, designed t
   - [Jest](https://jestjs.io/)- A delightful JavaScript Testing Framework with a focus on simplicity.
   - [TestBed](https://angular.dev/api/core/testing/TestBed)- Configures and initializes environment for unit testing and provides methods for creating components and services in unit tests.
   - [Github-Actions](https://github.com/features/actions)-  (CI/CD) platform that allows you to automate your   build, test, and deployment pipeline
-  - [Aws](https://aws.amazon.com/)- A comprehensive cloud computing platform offered by Amazon
-- State-management
+  - [Firebase Hosting](https://firebase.google.com/)-A fast and secure web hosting platform provided by Google for deploying web apps.
 
 ## 🚀 Features  
 
@@ -86,7 +85,7 @@ This project uses Jest (instead of Karma) for unit testing in Angular. One of th
 
 Automate project build, test, and deployment pipeline
 
-<img src="./src/app/assets/images/Screenshot 2025-06-03 at 08.52.18.png" width="900"/>
+<img src="./src/app/assets/images/deployments.png" width="600"/>
 
 ## 📦 Getting Started
 
