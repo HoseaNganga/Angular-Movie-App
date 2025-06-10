@@ -1,34 +1,33 @@
-name: Deploy Angular movie app to S3
+name: Deploy to Firebase Hosting
+
 on:
   push:
     branches:
       - main
+
 jobs:
-  deploy:
+  build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
+          node-version: "20"  
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build Angular App
+      - name: Build project
         run: npm run build
 
-      - name: Deploy to S3
-        uses: jakejarvis/s3-sync-action@v0.5.1
-        with:
-          args: --delete
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools@14.6.0
+
+      - name: Deploy to Firebase
+        run: firebase deploy --only hosting
         env:
-          AWS_S3_BUCKET: angular-movie
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: eu-north-1
-          SOURCE_DIR: dist/movie-app/browser
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
