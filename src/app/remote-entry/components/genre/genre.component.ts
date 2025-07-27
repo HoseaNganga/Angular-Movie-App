@@ -11,6 +11,12 @@ import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ListingComponent } from '../global/listing/listing.component';
 import { NgxSpinnerService } from 'ngx-spinner';
+import {
+  BaseMovie,
+  BaseTV,
+  GenreResponse,
+  TrendingResponse,
+} from '../../../services/model/movie.service.model';
 
 @Component({
   selector: 'app-genre',
@@ -44,7 +50,7 @@ export class GenreComponent implements OnInit, OnDestroy {
     this._movieService
       .getMovieGenres()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res) => {
+      .subscribe((res: GenreResponse) => {
         this.movieGenreList = res.genres;
       });
   }
@@ -53,33 +59,40 @@ export class GenreComponent implements OnInit, OnDestroy {
     this._movieService
       .getTvGenres()
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res) => {
+      .subscribe((res: GenreResponse) => {
         this.tvShowsGenreList = res.genres;
       });
   }
 
-  getGenreById(id: number, mediaType: string, page: number) {
+  getGenreById<T extends BaseMovie | BaseTV>(
+    id: number,
+    mediaType: string,
+    page: number
+  ) {
     if (this.isLoading) return;
 
     this.isLoading = true;
 
     this._movieService
-      .getGenreById(id, mediaType, page)
+      .getGenreById<T>(id, mediaType, page)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (res) => {
-          const results = res.results.map((item: any) => ({
+        (res: TrendingResponse<BaseMovie | BaseTV>) => {
+          const results = res.results.map((item: BaseMovie | BaseTV) => ({
             link: `/${mediaType}/${item.id}`,
             imgSrc: item.poster_path
               ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
               : null,
-            title: mediaType === 'tv' ? item.name : item.title,
+            title:
+              mediaType === 'tv'
+                ? (item as BaseTV).name
+                : (item as BaseMovie).title,
             rating: item.vote_average * 10,
             vote: item.vote_average,
           }));
 
-          this.genre_data = [...this.genre_data, ...results]; // Append instead of overwrite
-          this.page++; // Increment for next scroll
+          this.genre_data = [...this.genre_data, ...results];
+          this.page++;
           this.isLoading = false;
         },
         (err) => {
@@ -99,7 +112,11 @@ export class GenreComponent implements OnInit, OnDestroy {
     this.defaultId = selectedGenre;
 
     setTimeout(() => {
-      this.getGenreById(selectedGenre, type, this.page);
+      if (type === 'tv') {
+        this.getGenreById<BaseMovie>(selectedGenre, type, this.page);
+      } else {
+        this.getGenreById<BaseTV>(selectedGenre, type, this.page);
+      }
       this.spinner.hide();
     }, 1000);
   }

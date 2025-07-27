@@ -9,6 +9,13 @@ import { ListingComponent } from '../global/listing/listing.component';
 import { ImagesComponent } from '../global/images/images.component';
 import { SortByYearPipe } from '../global/pipes/SortByYear/sort-by-year.pipe';
 import { Subject, takeUntil } from 'rxjs';
+import {
+  BackdropImage,
+  PersonCreditResponse,
+  PersonDetails,
+  PersonExternalIds,
+  PersonImageResponse,
+} from '../../../services/model/movie.service.model';
 
 @Component({
   selector: 'app-person',
@@ -58,7 +65,7 @@ export class PersonComponent implements OnDestroy {
     this._movieService
       .getPerson(id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((result: any) => {
+      .subscribe((result: PersonDetails) => {
         this.person_data = result;
         this.getPersonalExternal(id);
       });
@@ -68,7 +75,7 @@ export class PersonComponent implements OnDestroy {
     this._movieService
       .getPersonExternalId(id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((result: any) => {
+      .subscribe((result: PersonExternalIds) => {
         this.external_data = result;
       });
   }
@@ -77,8 +84,8 @@ export class PersonComponent implements OnDestroy {
     this._movieService
       .getPersonImages(id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res: any) => {
-        this.posters = res.profiles.map((profile: any) => ({
+      .subscribe((res: PersonImageResponse) => {
+        this.posters = res.profiles.map((profile: BackdropImage) => ({
           ...profile,
           full_path: profile.file_path
             ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2/${profile.file_path}`
@@ -92,7 +99,7 @@ export class PersonComponent implements OnDestroy {
       .getPersonCredit(id)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (result: any) => {
+        (result: PersonCreditResponse) => {
           this.knownfor = result.cast.map((item: any) => {
             const releaseDate = item.release_date || item.first_air_date;
             const year = releaseDate

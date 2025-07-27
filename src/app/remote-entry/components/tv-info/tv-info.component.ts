@@ -11,6 +11,15 @@ import { VideosComponent } from '../global/videos/videos.component';
 import { CarouselComponent } from '../global/carousel/carousel.component';
 import { EpisodesComponent } from '../global/episodes/episodes.component';
 import { Subject, takeUntil } from 'rxjs';
+import {
+  BackdropResponse,
+  BaseTV,
+  CastResponse,
+  ExternalIds,
+  TrendingResponse,
+  TVDetails,
+  YouTubeTrailerResponse,
+} from '../../../services/model/movie.service.model';
 
 @Component({
   selector: 'app-tv-info',
@@ -65,7 +74,7 @@ export class TvInfoComponent implements OnInit, OnDestroy {
     this._movieService
       .getTvShow(id)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((result: any) => {
+      .subscribe((result: TVDetails) => {
         this.tv_data = result;
         this.getExternal(id);
       });
@@ -75,7 +84,7 @@ export class TvInfoComponent implements OnInit, OnDestroy {
     this._movieService
       .getExternalId(id, 'tv')
       .pipe(takeUntil(this.destroy$))
-      .subscribe((result: any) => {
+      .subscribe((result: ExternalIds) => {
         this.external_data = result;
       });
   }
@@ -84,7 +93,7 @@ export class TvInfoComponent implements OnInit, OnDestroy {
     this._movieService
       .getYouTubeTrailer(id, 'tv')
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res: any) => {
+      .subscribe((res: YouTubeTrailerResponse) => {
         this.video_data = res.results.length ? res.results[0] : null;
         this.videos = res.results;
         this.filteredVideos = this.videos;
@@ -107,7 +116,7 @@ export class TvInfoComponent implements OnInit, OnDestroy {
     this._movieService
       .getBackdrops(id, 'tv')
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res: any) => {
+      .subscribe((res: BackdropResponse) => {
         this.backdrops = res.backdrops;
         this.posters = [];
 
@@ -125,7 +134,7 @@ export class TvInfoComponent implements OnInit, OnDestroy {
       .getCredits(id, 'tv')
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (res: any) => {
+        (res: CastResponse) => {
           this.cast_data = res.cast.map((item: any) => ({
             link: `/person/${item.id}`,
             imgSrc: item.profile_path
@@ -144,11 +153,11 @@ export class TvInfoComponent implements OnInit, OnDestroy {
 
   getTvRecommended(id: number, page: number) {
     this._movieService
-      .getRecommended(id, page, 'tv')
+      .getRecommended<BaseTV>(id, page, 'tv')
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (res: any) => {
-          this.recom_data = res.results.map((item: any) => ({
+        (res: TrendingResponse<BaseTV>) => {
+          this.recom_data = res.results.map((item: BaseTV) => ({
             link: `/tv/${item.id}`,
             imgSrc: item.poster_path
               ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`

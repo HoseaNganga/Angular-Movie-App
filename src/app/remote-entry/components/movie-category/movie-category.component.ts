@@ -12,6 +12,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { CommonModule } from '@angular/common';
 import { ListingComponent } from '../global/listing/listing.component';
 import { Subject, takeUntil } from 'rxjs';
+import {
+  BaseMovie,
+  TrendingResponse,
+} from '../../../services/model/movie.service.model';
 
 @Component({
   selector: 'app-movie-category',
@@ -57,10 +61,10 @@ export class MovieCategoryComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     this._movieService
-      .getCategory(category, this.page, 'movie')
+      .getCategory<BaseMovie>(category, this.page, 'movie')
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (response) => {
+        (response: TrendingResponse<BaseMovie>) => {
           const results = response.results;
           for (const item of results) {
             const movie = {

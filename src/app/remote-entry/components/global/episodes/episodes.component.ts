@@ -5,6 +5,10 @@ import { MovieService } from '../../../../services/movie.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Subject, take, takeUntil } from 'rxjs';
+import {
+  TVDetails,
+  TvSeasonDetails,
+} from '../../../../services/model/movie.service.model';
 
 @Component({
   selector: 'app-episodes',
@@ -32,7 +36,7 @@ export class EpisodesComponent implements OnInit, OnDestroy {
         .getTvShow(this.id)
         .pipe(takeUntil(this.destroy$))
         .subscribe(
-          (result) => {
+          (result: TVDetails) => {
             this.handleTvInfo(result);
             this.spinner.hide();
           },
@@ -60,7 +64,7 @@ export class EpisodesComponent implements OnInit, OnDestroy {
       .getTvShowEpisodes(id, season)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (data) => {
+        (data: TvSeasonDetails) => {
           this.episodes_data = data.episodes;
         },
         (error) => {

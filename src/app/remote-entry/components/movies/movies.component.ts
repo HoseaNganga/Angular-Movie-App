@@ -6,6 +6,10 @@ import { MovieService } from '../../../services/movie.service';
 import { SliderComponent } from '../global/slider/slider.component';
 import { CarouselComponent } from '../global/carousel/carousel.component';
 import { Subject } from 'rxjs';
+import {
+  BaseMovie,
+  TrendingResponse,
+} from '../../../services/model/movie.service.model';
 
 @Component({
   selector: 'app-movies',
@@ -63,20 +67,22 @@ export class MoviesComponent implements OnInit, OnDestroy {
 
   fetchMovies(category: string, property: string): void {
     this._movieService
-      .getCategory(category, 1, 'movie')
+      .getCategory<BaseMovie>(category, 1, 'movie')
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (res) => {
-          this.movieCategories[property] = res.results.map((item: any) => ({
-            link: `/movie/${item.id}`,
-            linkExplorer: `/movie/category/${category}`,
-            imgSrc: item.poster_path
-              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
-              : null,
-            title: item.title,
-            rating: item.vote_average * 10,
-            vote: item.vote_average,
-          }));
+        (res: TrendingResponse<BaseMovie>) => {
+          this.movieCategories[property] = res.results.map(
+            (item: BaseMovie) => ({
+              link: `/movie/${item.id}`,
+              linkExplorer: `/movie/category/${category}`,
+              imgSrc: item.poster_path
+                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+                : null,
+              title: item.title,
+              rating: item.vote_average * 10,
+              vote: item.vote_average,
+            })
+          );
         },
         (error) => {
           console.error(`Error fetching ${category} movies:`, error);

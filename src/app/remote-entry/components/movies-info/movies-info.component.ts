@@ -9,6 +9,15 @@ import { VideosComponent } from '../global/videos/videos.component';
 import { ImagesComponent } from '../global/images/images.component';
 import { CarouselComponent } from '../global/carousel/carousel.component';
 import { Subject, takeUntil } from 'rxjs';
+import {
+  BackdropResponse,
+  BaseMovie,
+  CastResponse,
+  ExternalIds,
+  MovieDetails,
+  TrendingResponse,
+  YouTubeTrailerResponse,
+} from '../../../services/model/movie.service.model';
 
 @Component({
   selector: 'app-movies-info',
@@ -64,13 +73,13 @@ export class MoviesInfoComponent implements OnInit {
     this._movieService
       .getMovie(id, 'movie')
       .pipe(takeUntil(this.destroy$))
-      .subscribe((result: any) => {
+      .subscribe((result: MovieDetails) => {
         this.movie_data = result;
         this._movieService
           .getYouTubeTrailer(id, 'movie')
           .pipe(takeUntil(this.destroy$))
           .subscribe(
-            (videoRes: any) => {
+            (videoRes: YouTubeTrailerResponse) => {
               const video = videoRes.results.find(
                 (vid: any) =>
                   vid.site === 'YouTube' &&
@@ -98,7 +107,7 @@ export class MoviesInfoComponent implements OnInit {
     this._movieService
       .getExternalId(id, mediaType)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res: any) => {
+      .subscribe((res: ExternalIds) => {
         this.external_data = res;
       });
   }
@@ -107,7 +116,7 @@ export class MoviesInfoComponent implements OnInit {
     this._movieService
       .getYouTubeTrailer(id, mediaType)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res: any) => {
+      .subscribe((res: YouTubeTrailerResponse) => {
         this.videos = res.results;
       });
   }
@@ -116,7 +125,7 @@ export class MoviesInfoComponent implements OnInit {
     this._movieService
       .getBackdrops(id, mediaType)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((res: any) => {
+      .subscribe((res: BackdropResponse) => {
         this.backdrops = res.backdrops;
         this.posters = [];
         res.posters.forEach((poster: { file_path: string }) => {
@@ -132,7 +141,7 @@ export class MoviesInfoComponent implements OnInit {
       .getCredits(id, mediaType)
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (res: any) => {
+        (res: CastResponse) => {
           this.cast_data = [];
           for (let item of res.cast) {
             this.cast_data.push({
@@ -153,11 +162,11 @@ export class MoviesInfoComponent implements OnInit {
   }
   getMovieRecommended(id: number, page: number) {
     this._movieService
-      .getRecommended(id, page, 'movie')
+      .getRecommended<BaseMovie>(id, page, 'movie')
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (res: any) => {
-          this.recom_data = res.results.map((item: any) => ({
+        (res: TrendingResponse<BaseMovie>) => {
+          this.recom_data = res.results.map((item: BaseMovie) => ({
             link: `/movie/${item.id}`,
             imgSrc: item.poster_path
               ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`

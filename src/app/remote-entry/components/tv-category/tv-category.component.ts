@@ -11,6 +11,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { CommonModule } from '@angular/common';
 import { ListingComponent } from '../global/listing/listing.component';
 import { Subject, takeUntil } from 'rxjs';
+import {
+  BaseTV,
+  TrendingResponse,
+} from '../../../services/model/movie.service.model';
 
 @Component({
   selector: 'app-tv-category',
@@ -18,7 +22,7 @@ import { Subject, takeUntil } from 'rxjs';
   imports: [CommonModule, ListingComponent],
   styleUrl: './tv-category.component.scss',
 })
-export class TvCategoryComponent implements OnDestroy {
+export class TvCategoryComponent implements OnDestroy, OnInit {
   category!: string;
   page: number = 1;
   isLoading: boolean = false;
@@ -57,12 +61,12 @@ export class TvCategoryComponent implements OnDestroy {
     this.isLoading = true;
 
     this._movieService
-      .getCategory(category, this.page, 'tv')
+      .getCategory<BaseTV>(category, this.page, 'tv')
       .pipe(takeUntil(this.destroy$))
       .subscribe(
-        (response) => {
+        (response: TrendingResponse<BaseTV>) => {
           this.tvCategories[property].push(
-            ...response.results.map((item: any) => ({
+            ...response.results.map((item: BaseTV) => ({
               link: `/tv/${item.id}`,
               imgSrc: item.poster_path
                 ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
