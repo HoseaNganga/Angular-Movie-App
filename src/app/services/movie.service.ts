@@ -98,38 +98,38 @@ export class MovieService {
   getPerson(id: number): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`${this.baseUrl}//person/${id}`, { params })
+      .get(`${this.baseUrl}/person/${id}`, { params })
       .pipe(catchError(this.handleError));
   }
   getPersonImages(id: number): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`${this.baseUrl}//person/${id}/images`, { params })
+      .get(`${this.baseUrl}/person/${id}/images`, { params })
       .pipe(catchError(this.handleError));
   }
 
   getPersonCredit(id: number): Observable<any> {
     const params = this.buildParams({});
     return this._httpClientService
-      .get(`${this.baseUrl}//person/${id}/movie_credits`, { params })
+      .get(`${this.baseUrl}/person/${id}/movie_credits`, { params })
       .pipe(catchError(this.handleError));
   }
 
   getPersonExternalId(id: number): Observable<any> {
     return this._httpClientService
-      .get(`${this.baseUrl}//person/${id}/external_ids`, {
+      .get(`${this.baseUrl}/person/${id}/external_ids`, {
         params: this.buildParams({}),
       })
       .pipe(catchError(this.handleError));
   }
   getMovieGenres(): Observable<any> {
     return this._httpClientService
-      .get(`${this.baseUrl}//genre/movie/list?language=en`)
+      .get(`${this.baseUrl}/genre/movie/list?language=en`)
       .pipe(catchError(this.handleError));
   }
   getTvGenres(): Observable<any> {
     return this._httpClientService
-      .get(`${this.baseUrl}//genre/tv/list?language=en`)
+      .get(`${this.baseUrl}/genre/tv/list?language=en`)
       .pipe(catchError(this.handleError));
   }
 
@@ -146,7 +146,7 @@ export class MovieService {
   search(query: string, page: number): Observable<any> {
     const params = this.buildParams({ query, page: page.toString() });
     return this._httpClientService
-      .get(`${this.baseUrl}//search/multi`, { params })
+      .get(`${this.baseUrl}/search/multi`, { params })
       .pipe(catchError(this.handleError));
   }
 
