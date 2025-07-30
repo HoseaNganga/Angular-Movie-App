@@ -1,16 +1,16 @@
-<app-slider [data]="slider_data"></app-slider>
+<app-slider [data]="slider_data()"></app-slider>
 <app-carousel
   [title]="'Trending Movies'"
   [canNavigateLeft]="true"
   [canNavigateRight]="true"
-  [items]="trendingMovies_slider_data"
+  [items]="trendingMovies_slider_data()"
   [isExplore]="false"
   [exploreLink]="'/movie/category/now_playing'"
 ></app-carousel>
 <app-carousel
   [title]="'Trending Tv Shows'"
   [isExplore]="false"
-  [items]="trendingTvShows_slider_data"
+  [items]="trendingTvShows_slider_data()"
   [canNavigateLeft]="true"
   [canNavigateRight]="true"
   [exploreLink]="'/tv/category/airing_today'"

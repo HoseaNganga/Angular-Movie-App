@@ -1,96 +1,81 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { delay, take, takeUntil } from 'rxjs/operators';
+import { Component, inject, signal, effect } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { MovieService } from '../../../services/movie.service';
 import { SliderComponent } from '../global/slider/slider.component';
 import { CarouselComponent } from '../global/carousel/carousel.component';
-import { Subject } from 'rxjs';
-import {
-  BaseMovie,
-  TrendingResponse,
-} from '../../../services/model/movie.service.model';
+import { MovieStore } from '../../../store/movie.store';
+import { BaseMovie } from '../../../services/model/movie.service.model';
 
 @Component({
   selector: 'app-movies',
   templateUrl: './movies.component.html',
   imports: [SliderComponent, CarouselComponent, RouterModule],
   styleUrls: ['./movies.component.scss'],
+  standalone: true,
 })
-export class MoviesComponent implements OnInit, OnDestroy {
-  private readonly _movieService = inject(MovieService);
-  private readonly route = inject(ActivatedRoute);
+export class MoviesComponent {
+  private readonly movieStore = inject(MovieStore);
   private readonly _spinnerService = inject(NgxSpinnerService);
-  private readonly destroy$ = new Subject<void>();
-  hero: any;
-  movies_data: any[] = [];
 
-  movieCategories: { [key: string]: any[] } = {
+  movies_data = signal<any[]>([]);
+  movieCategories = signal<{ [key: string]: any[] }>({
     nowPlayingMovies: [],
     popularMovies: [],
     upcomingMovies: [],
     topRatedMovies: [],
-  };
+  });
 
-  ngOnInit() {
+
+  constructor() {
     this._spinnerService.show();
-    this.getNowPlaying(2);
-    this.loadMovies();
-    setTimeout(() => {
-      this._spinnerService.hide();
-    }, 4000);
-  }
 
-  getNowPlaying(page: number): void {
-    this._movieService
-      .getNowPlaying('movie', page)
-      .pipe(delay(2000), takeUntil(this.destroy$))
-      .subscribe(
-        (res: any) => {
-          this.movies_data = res.results.map((item: any) => ({
+    this.movieStore.loadNowPlaying('movie', 2);
+    this.loadCategoryData('now_playing', 'nowPlayingMovies');
+    this.loadCategoryData('popular', 'popularMovies');
+    this.loadCategoryData('upcoming', 'upcomingMovies');
+    this.loadCategoryData('top_rated', 'topRatedMovies');
+
+
+    effect(() => {
+      const nowPlaying = this.movieStore.nowPlaying();
+      if (nowPlaying) {
+        this.movies_data.set(
+          nowPlaying.results.map((item) => ({
             ...item,
             link: `/movie/${item.id}`,
-          }));
-        },
-        (error) => {
-          console.error('Error fetching now playing data', error);
-        }
-      );
+          }))
+        );
+      }
+    });
+
+    setTimeout(() => {
+      this._spinnerService.hide();
+    }, 3000);
   }
 
-  loadMovies() {
-    this.fetchMovies('now_playing', 'nowPlayingMovies');
-    this.fetchMovies('popular', 'popularMovies');
-    this.fetchMovies('upcoming', 'upcomingMovies');
-    this.fetchMovies('top_rated', 'topRatedMovies');
-  }
+  loadCategoryData(category: string, targetKey: string): void {
+    this.movieStore.loadCategory(category, 1, 'movie');
 
-  fetchMovies(category: string, property: string): void {
-    this._movieService
-      .getCategory<BaseMovie>(category, 1, 'movie')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (res: TrendingResponse<BaseMovie>) => {
-          this.movieCategories[property] = res.results.map(
-            (item: BaseMovie) => ({
-              link: `/movie/${item.id}`,
-              linkExplorer: `/movie/category/${category}`,
-              imgSrc: item.poster_path
-                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
-                : null,
-              title: item.title,
-              rating: item.vote_average * 10,
-              vote: item.vote_average,
-            })
-          );
-        },
-        (error) => {
-          console.error(`Error fetching ${category} movies:`, error);
-        }
-      );
-  }
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    effect(() => {
+      const resMap = this.movieStore.categoryResults();
+      const categoryItems = resMap[category];
+      if (!categoryItems || categoryItems.length === 0) return;
+
+      const mapped = categoryItems.map((item) => ({
+        link: `/movie/${item.id}`,
+        linkExplorer: `/movie/category/${category}`,
+        imgSrc: item.poster_path
+          ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+          : null,
+        title: (item as BaseMovie).title,
+        rating: item.vote_average * 10,
+        vote: item.vote_average,
+      }));
+
+      this.movieCategories.update((prev) => ({
+        ...prev,
+        [targetKey]: mapped,
+      }));
+    });
   }
 }

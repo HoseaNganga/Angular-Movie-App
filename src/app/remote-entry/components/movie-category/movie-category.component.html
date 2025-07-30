@@ -1,30 +1,10 @@
 <div class="spacing">
-  @if(category==='popular'){
   <app-listing
-    [items]="movieCategories['popularMovies']"
-    [title]="'Popular Movies'"
-  >
-  </app-listing>
-  } @if(category==='top_rated'){
-  <app-listing
-    [items]="movieCategories['topRatedMovies']"
-    [title]="'Top Rated Movies'"
-  >
-  </app-listing>
-  } @if(category==='upcoming'){
-  <app-listing
-    [items]="movieCategories['upcomingMovies']"
-    [title]="'Upcoming Movies'"
-  >
-  </app-listing>
-  } @if(category==='now_playing'){
-  <app-listing
-    [items]="movieCategories['nowPlayingMovies']"
-    [title]="'Now Playing Movies'"
-  >
-  </app-listing>
-  } @if(isLoading){
-  <div class="infinite-scroll-loading">
+    [items]="transformedMovies()"
+    [title]="getTitle(category)"
+  ></app-listing>
+
+  <div class="infinite-scroll-loading" *ngIf="isLoading()">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="60"
@@ -80,6 +60,4 @@
       </g>
     </svg>
   </div>
-
-  }
 </div>

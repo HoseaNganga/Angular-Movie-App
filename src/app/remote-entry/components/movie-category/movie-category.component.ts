@@ -1,124 +1,109 @@
 import {
   Component,
-  OnInit,
   HostListener,
-  inject,
+  OnInit,
   OnDestroy,
+  inject,
+  signal,
+  computed,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MovieService } from '../../../services/movie.service';
-import { NgxSpinnerService } from 'ngx-spinner';
-
 import { CommonModule } from '@angular/common';
 import { ListingComponent } from '../global/listing/listing.component';
-import { Subject, takeUntil } from 'rxjs';
-import {
-  BaseMovie,
-  TrendingResponse,
-} from '../../../services/model/movie.service.model';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { MovieStore } from '../../../store/movie.store';
+import { BaseMovie } from '../../../services/model/movie.service.model';
+import { takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-movie-category',
-  templateUrl: './movie-category.component.html',
+  standalone: true,
   imports: [CommonModule, ListingComponent],
+  templateUrl: './movie-category.component.html',
   styleUrls: ['./movie-category.component.scss'],
 })
-export class MovieCategoryComponent implements OnInit, OnDestroy {
+export class MovieCategoryComponent implements OnInit,OnDestroy {
   private readonly route = inject(ActivatedRoute);
-  private readonly _movieService = inject(MovieService);
-  private readonly _spinnerService = inject(NgxSpinnerService);
+  private readonly spinner = inject(NgxSpinnerService);
+  private readonly store = inject(MovieStore);
   private readonly destroy$ = new Subject<void>();
+
   category!: string;
-  page: number = 1;
-  isLoading: boolean = false;
-  movieCategories: { [key: string]: any[] } = {
-    popularMovies: [],
-    topRatedMovies: [],
-    upcomingMovies: [],
-    nowPlayingMovies: [],
-  };
+  page = signal(1);
+
+  readonly isLoading = computed(() => this.store.loading());
+  readonly categoryResults = computed(() => {
+    return this.store.categoryResults()?.[this.category] ?? [];
+  });
+
+  readonly transformedMovies = computed(() => {
+    return this.categoryResults().map((item) => ({
+      link: `/movie/${item.id}`,
+      imgSrc: item.poster_path
+        ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+        : null,
+      title: (item as BaseMovie).title,
+      rating: item.vote_average * 10,
+      vote: item.vote_average,
+    }));
+  });
 
   ngOnInit() {
-    this._spinnerService.show();
+    this.spinner.show();
 
-    this.route.url.subscribe((url) => {
-      this.category = url[2].path;
-      this.page = 1;
-      this.loadCategoryMovies(this.category);
+    this.route.url.pipe(takeUntil(this.destroy$)).subscribe((url) => {
+      this.category = url[2]?.path;
+      this.page.set(1);
+      this.store.loadCategory(this.category, this.page(), 'movie');
     });
 
     setTimeout(() => {
-      this._spinnerService.hide();
-    }, 2000);
+      this.spinner.hide();
+    }, 1500);
   }
 
-  loadCategoryMovies(category: string) {
-    this.fetchMovies(category, this.getCategoryProperty(category));
-  }
-
-  fetchMovies(category: string, property: string): void {
-    if (this.isLoading) return;
-    this.isLoading = true;
-
-    this._movieService
-      .getCategory<BaseMovie>(category, this.page, 'movie')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (response: TrendingResponse<BaseMovie>) => {
-          const results = response.results;
-          for (const item of results) {
-            const movie = {
-              link: `/movie/${item.id}`,
-              imgSrc: item.poster_path
-                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
-                : null,
-              title: item.title,
-              rating: item.vote_average * 10,
-              vote: item.vote_average,
-            };
-            this.movieCategories[property].push(movie);
-          }
-          this.isLoading = false;
-          this.page++;
-        },
-        (error) => {
-          console.error(`Error fetching ${category} movies:`, error);
-          this.isLoading = false;
-        }
-      );
-  }
-
-  getCategoryProperty(category: string): string {
+  getTitle(category: string): string {
     switch (category) {
       case 'popular':
-        return 'popularMovies';
+        return 'Popular Movies';
       case 'top_rated':
-        return 'topRatedMovies';
+        return 'Top Rated Movies';
       case 'upcoming':
-        return 'upcomingMovies';
+        return 'Upcoming Movies';
       case 'now_playing':
-        return 'nowPlayingMovies';
+        return 'Now Playing Movies';
       default:
-        return '';
+        return 'Movies';
     }
+  }
+
+  loadNextPage() {
+    if (this.isLoading()) return;
+
+    const nextPage = this.page() + 1;
+    this.page.set(nextPage);
+    this.store.loadCategory(this.category, nextPage, 'movie');
   }
 
   @HostListener('window:scroll', ['$event'])
   onScroll(event: Event) {
-    const pos =
-      (document.documentElement.scrollTop || document.body.scrollTop) +
-      window.innerHeight;
-    const max =
+    const scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    const windowHeight = window.innerHeight;
+    const scrollHeight =
       document.documentElement.scrollHeight || document.body.scrollHeight;
 
-    if (pos > max - 100) {
-      this.loadCategoryMovies(this.category);
+    const scrolledPercentage = (scrollTop + windowHeight) / scrollHeight;
+
+    if (scrolledPercentage >= 0.5 && !this.isLoading()) {
+      this.loadNextPage();
     }
   }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    this._spinnerService.hide();
-    this.isLoading = false;
+    this.spinner.hide();
   }
 }

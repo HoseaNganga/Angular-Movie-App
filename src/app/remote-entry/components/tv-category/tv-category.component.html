@@ -1,27 +1,10 @@
 <div class="spacing">
-  @if(category === 'popular'){
-  <app-listing [items]="tvCategories['popularTv']" [title]="'Popular TV Shows'">
-  </app-listing>
-  } @if(category === 'top_rated'){
   <app-listing
-    [items]="tvCategories['topRatedTv']"
-    [title]="'Top Rated TV Shows'"
-  >
-  </app-listing>
-  } @if(category === 'on_the_air'){
-  <app-listing
-    [items]="tvCategories['onTheAirTv']"
-    [title]="'Currently Airing TV Shows'"
-  >
-  </app-listing>
-  } @if(category === 'airing_today'){
-  <app-listing
-    [items]="tvCategories['airingTodayTv']"
-    [title]="'TV Shows Airing Today'"
-  >
-  </app-listing>
-  } @if(isLoading){
-  <div class="infinite-scroll-loading">
+    [items]="transformedTvShows()"
+    [title]="getTitle(category)"
+  ></app-listing>
+
+  <div class="infinite-scroll-loading" *ngIf="isLoading()">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="60"
@@ -77,6 +60,4 @@
       </g>
     </svg>
   </div>
-
-  }
 </div>

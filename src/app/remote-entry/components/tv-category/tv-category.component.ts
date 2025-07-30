@@ -4,17 +4,16 @@ import {
   HostListener,
   inject,
   OnDestroy,
+  computed,
+  signal,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MovieService } from '../../../services/movie.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { CommonModule } from '@angular/common';
 import { ListingComponent } from '../global/listing/listing.component';
-import { Subject, takeUntil } from 'rxjs';
-import {
-  BaseTV,
-  TrendingResponse,
-} from '../../../services/model/movie.service.model';
+import { Subject } from 'rxjs';
+import { BaseTV } from '../../../services/model/movie.service.model';
+import { MovieStore } from '../../../store/movie.store';
 
 @Component({
   selector: 'app-tv-category',
@@ -23,9 +22,31 @@ import {
   styleUrl: './tv-category.component.scss',
 })
 export class TvCategoryComponent implements OnDestroy, OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly spinner = inject(NgxSpinnerService);
+  private readonly store = inject(MovieStore);
+  private readonly destroy$ = new Subject<void>();
+
   category!: string;
-  page: number = 1;
-  isLoading: boolean = false;
+  page = signal(1);
+
+  readonly isLoading = computed(() => this.store.loading());
+  readonly categoryResults = computed(() => {
+    return this.store.categoryResults()?.[this.category] ?? [];
+  });
+
+  readonly transformedTvShows = computed(() => {
+    return this.categoryResults().map((item) => ({
+      link: `/movie/${item.id}`,
+      imgSrc: item.poster_path
+        ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+        : null,
+      title: (item as BaseTV).name,
+      rating: item.vote_average * 10,
+      vote: item.vote_average,
+    }));
+  });
+
   tvCategories: { [key: string]: any[] } = {
     popularTv: [],
     topRatedTv: [],
@@ -33,18 +54,13 @@ export class TvCategoryComponent implements OnDestroy, OnInit {
     airingTodayTv: [],
   };
 
-  private readonly route = inject(ActivatedRoute);
-  private readonly _movieService = inject(MovieService);
-  private readonly spinner = inject(NgxSpinnerService);
-  private readonly destroy$ = new Subject<void>();
-
   ngOnInit() {
     this.spinner.show();
 
     this.route.url.subscribe((url) => {
       this.category = url[2].path;
-      this.page = 1;
-      this.loadCategoryTv(this.category);
+      this.page.set(1);
+      this.store.loadCategory(this.category, this.page(), 'tv');
     });
 
     setTimeout(() => {
@@ -52,41 +68,7 @@ export class TvCategoryComponent implements OnDestroy, OnInit {
     }, 2000);
   }
 
-  loadCategoryTv(category: string) {
-    this.fetchTv(category, this.getCategoryProperty(category));
-  }
-
-  fetchTv(category: string, property: string): void {
-    if (this.isLoading) return;
-    this.isLoading = true;
-
-    this._movieService
-      .getCategory<BaseTV>(category, this.page, 'tv')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(
-        (response: TrendingResponse<BaseTV>) => {
-          this.tvCategories[property].push(
-            ...response.results.map((item: BaseTV) => ({
-              link: `/tv/${item.id}`,
-              imgSrc: item.poster_path
-                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
-                : null,
-              title: item.name,
-              rating: item.vote_average * 10,
-              vote: item.vote_average,
-            }))
-          );
-          this.isLoading = false;
-          this.page++;
-        },
-        (error) => {
-          console.error(`Error fetching ${category} tv:`, error);
-          this.isLoading = false;
-        }
-      );
-  }
-
-  getCategoryProperty(category: string): string {
+  getTitle(category: string): string {
     switch (category) {
       case 'popular':
         return 'popularTv';
@@ -101,20 +83,32 @@ export class TvCategoryComponent implements OnDestroy, OnInit {
     }
   }
 
+  loadNextPage() {
+    if (this.isLoading()) return;
+
+    const nextPage = this.page() + 1;
+    this.page.set(nextPage);
+    this.store.loadCategory(this.category, nextPage, 'tv');
+  }
+
   @HostListener('window:scroll', ['$event'])
   onScroll(event: Event) {
-    const pos =
-      (document.documentElement.scrollTop || document.body.scrollTop) +
-      window.innerHeight;
-    const max =
+    const scrollTop =
+      document.documentElement.scrollTop || document.body.scrollTop;
+    const windowHeight = window.innerHeight;
+    const scrollHeight =
       document.documentElement.scrollHeight || document.body.scrollHeight;
-    if (pos > max - 100) {
-      this.loadCategoryTv(this.category);
+
+    const scrolledPercentage = (scrollTop + windowHeight) / scrollHeight;
+
+    if (scrolledPercentage >= 0.5 && !this.isLoading()) {
+      this.loadNextPage();
     }
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.spinner.hide();
   }
 }
