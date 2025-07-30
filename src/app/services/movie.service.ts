@@ -140,7 +140,7 @@ export class MovieService {
       page: page.toString(),
     });
     return this._httpClientService
-      .get(`${this.baseUrl}//discover/${type}?`, { params })
+      .get(`${this.baseUrl}/discover/${type}?`, { params })
       .pipe(catchError(this.handleError));
   }
   search(query: string, page: number): Observable<any> {
