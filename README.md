@@ -97,16 +97,16 @@ First, run the development server:
 git clone https://github.com/HoseaNganga/Angular-Movie-App.git
 ```
 
-2. Install dependecies
+2. Change directory
+
+```bash
+cd Angular-Movie-App
+```
+
+3. Install dependecies
 
 ```bash
 npm install
-```
-
-3. Change directory
-
-```bash
- cd Angular-movie-app
 ```
 
 4. Run the application
