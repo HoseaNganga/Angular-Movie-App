@@ -11,7 +11,7 @@ export class EnvironmentService {
 
   loadEnv(): Promise<void> {
     return this.http
-      .get('https://appinitializer.onrender.com/config')
+      .get('https://appinitializer-production.up.railway.app/config')
       .toPromise()
       .then((res) => {
         this.config = res;
