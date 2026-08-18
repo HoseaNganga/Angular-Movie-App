@@ -8,8 +8,7 @@ import { provideRouter } from '@angular/router';
 import { remoteRoutes } from './remote-entry/entry.route';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authInterceptor } from './remote-entry/Auth-Interceptor/auth.interceptor';
+import { provideHttpClient } from '@angular/common/http';
 import { initializeApp } from '../core/environment.loader';
 
 export const appConfig: ApplicationConfig = {
@@ -18,7 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(remoteRoutes),
     provideAnimations(),
     importProvidersFrom(BrowserAnimationsModule),
-    provideHttpClient(withInterceptors([authInterceptor])),
+    provideHttpClient(),
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,

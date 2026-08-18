@@ -89,7 +89,7 @@ describe('GenreComponent', () => {
     expect(component.genre_data).toEqual([
       {
         link: '/movie/1',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster.jpg',
         title: 'Test Movie',
         rating: 75,
         vote: 7.5,
@@ -119,7 +119,7 @@ describe('GenreComponent', () => {
     expect(component.genre_data).toEqual([
       {
         link: '/movie/1',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster.jpg',
         title: 'Test Movie',
         rating: 75,
         vote: 7.5,
@@ -160,7 +160,7 @@ describe('GenreComponent', () => {
     expect(component.genre_data).toEqual([
       {
         link: '/movie/1',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster.jpg',
         title: 'Test Movie',
         rating: 75,
         vote: 7.5,

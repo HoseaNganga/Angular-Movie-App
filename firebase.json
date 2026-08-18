@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "angularmovieapp-67b0c",
     "public": "dist/movie-app/browser",
     "ignore": [
       "firebase.json",

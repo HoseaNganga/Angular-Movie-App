@@ -214,7 +214,7 @@ describe('MoviesComponent', () => {
       {
         link: '/movie/1',
         linkExplorer: '/movie/category/popular',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster1.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster1.jpg',
         title: 'Movie 1',
         rating: 75,
         vote: 7.5,
@@ -266,7 +266,7 @@ describe('MoviesComponent', () => {
       {
         link: '/movie/1',
         linkExplorer: '/movie/category/popular',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster1.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster1.jpg',
         title: 'Movie 1',
         rating: 65,
         vote: 6.5,

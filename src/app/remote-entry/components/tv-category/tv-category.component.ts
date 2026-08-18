@@ -65,7 +65,7 @@ export class TvCategoryComponent implements OnDestroy {
             ...response.results.map((item: any) => ({
               link: `/tv/${item.id}`,
               imgSrc: item.poster_path
-                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+                ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
                 : null,
               title: item.name,
               rating: item.vote_average * 10,

@@ -85,7 +85,7 @@ describe('MediaComponent', () => {
 
     const img = fixture.nativeElement.querySelector('.poster img');
     expect(img.getAttribute('src')).toBe(
-      'https://image.tmdb.org/t/p/w370_and_h556_bestv2//profile1.jpg'
+      'https://image.tmdb.org/t/p/w185//profile1.jpg'
     );
     expect(img.getAttribute('alt')).toBe('Test Person');
 

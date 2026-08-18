@@ -192,14 +192,14 @@ describe('HomeComponent', () => {
     expect(component.trendingMovies_slider_data).toEqual([
       {
         link: '/movie/1',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster1.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster1.jpg',
         title: 'Movie 1',
         rating: 75,
         vote: 7.5,
       },
       {
         link: '/movie/2',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster2.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster2.jpg',
         title: 'Movie 2',
         rating: 80,
         vote: 8.0,
@@ -229,7 +229,7 @@ describe('HomeComponent', () => {
     expect(component.trendingTvShows_slider_data).toEqual([
       {
         link: '/tv/1',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster1.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster1.jpg',
         title: 'TV Show 1',
         rating: 75,
         vote: 7.5,
@@ -276,7 +276,7 @@ describe('HomeComponent', () => {
     expect(component.trendingMovies_slider_data).toEqual([
       {
         link: '/movie/1',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster1.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster1.jpg',
         title: 'Movie 1',
         rating: 75,
         vote: 7.5,

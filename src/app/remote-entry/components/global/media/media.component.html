@@ -6,7 +6,7 @@
         alt="{{ data?.title || data?.name }}"
         class="lazyload"
         [src]="
-          'https://image.tmdb.org/t/p/w370_and_h556_bestv2/' + data?.poster_path
+          'https://image.tmdb.org/t/p/w500/' + data?.poster_path
         "
       />
       } @if(type === 'person' && data?.profile_path){
@@ -14,7 +14,7 @@
         alt="{{ data?.name }}"
         class="lazyload"
         [src]="
-          'https://image.tmdb.org/t/p/w370_and_h556_bestv2/' +
+          'https://image.tmdb.org/t/p/w185/' +
           data?.profile_path
         "
       />
@@ -23,7 +23,7 @@
         alt="{{ data?.name }}"
         class="lazyload"
         [src]="
-          'https://image.tmdb.org/t/p/w370_and_h556_bestv2/' + data?.poster_path
+          'https://image.tmdb.org/t/p/w500/' + data?.poster_path
         "
       />
       }

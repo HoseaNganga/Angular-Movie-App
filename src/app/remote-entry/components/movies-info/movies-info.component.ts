@@ -138,7 +138,7 @@ export class MoviesInfoComponent implements OnInit {
             this.cast_data.push({
               link: `/person/${item.id}`,
               imgSrc: item.profile_path
-                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.profile_path}`
+                ? `https://image.tmdb.org/t/p/w185${item.profile_path}`
                 : null,
               name: item.name,
               character: item.character,
@@ -160,7 +160,7 @@ export class MoviesInfoComponent implements OnInit {
           this.recom_data = res.results.map((item: any) => ({
             link: `/movie/${item.id}`,
             imgSrc: item.poster_path
-              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+              ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
               : null,
             title: item.title,
             vote: item.vote_average ? item.vote_average : 'N/A',

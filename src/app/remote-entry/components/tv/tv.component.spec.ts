@@ -179,7 +179,7 @@ describe('TvComponent', () => {
     expect(component.tvCategories['popularTv']).toEqual([
       {
         link: '/tv/1',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster.jpg',
         title: 'TV Show',
         rating: 85,
         vote: 8.5,
@@ -226,7 +226,7 @@ describe('TvComponent', () => {
     expect(component.tvCategories['popularTv']).toEqual([
       {
         link: '/tv/1',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster.jpg',
         title: 'TV Show',
         rating: 85,
         vote: 8.5,

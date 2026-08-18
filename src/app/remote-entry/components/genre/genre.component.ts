@@ -71,7 +71,7 @@ export class GenreComponent implements OnInit, OnDestroy {
           const results = res.results.map((item: any) => ({
             link: `/${mediaType}/${item.id}`,
             imgSrc: item.poster_path
-              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+              ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
               : null,
             title: mediaType === 'tv' ? item.name : item.title,
             rating: item.vote_average * 10,

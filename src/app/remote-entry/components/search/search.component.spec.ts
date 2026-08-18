@@ -137,7 +137,7 @@ describe('SearchComponent', () => {
       {
         link: '/movie/1',
         imgSrc:
-          'https://image.tmdb.org/t/p/w370_and_h556_bestv2/test-poster.jpg',
+          'https://image.tmdb.org/t/p/w500/test-poster.jpg',
         title: 'Test Movie',
         rating: 85,
         vote: 8.5,
@@ -165,7 +165,7 @@ describe('SearchComponent', () => {
     expect(component.searchResults).toEqual([
       {
         link: '/tv/2',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/tv-poster.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/tv-poster.jpg',
         title: 'Test TV Show',
         rating: 73,
         vote: 7.3,
@@ -194,7 +194,7 @@ describe('SearchComponent', () => {
       {
         link: '/person/3',
         imgSrc:
-          'https://image.tmdb.org/t/p/w370_and_h556_bestv2/person-photo.jpg',
+          'https://image.tmdb.org/t/p/w500/person-photo.jpg',
         title: 'Test Person',
         rating: 'N/A',
         vote: 'N/A',

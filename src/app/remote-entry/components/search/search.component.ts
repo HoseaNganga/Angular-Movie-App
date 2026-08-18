@@ -41,7 +41,7 @@ export class SearchComponent implements OnInit, OnDestroy {
                   ? `/tv/${item.id}`
                   : `/person/${item.id}`,
               imgSrc: item.poster_path
-                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+                ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
                 : '',
               title: item.title || item.name,
               rating: item.vote_average ? item.vote_average * 10 : 'N/A',

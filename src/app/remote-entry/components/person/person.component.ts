@@ -81,7 +81,7 @@ export class PersonComponent implements OnDestroy {
         this.posters = res.profiles.map((profile: any) => ({
           ...profile,
           full_path: profile.file_path
-            ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2/${profile.file_path}`
+            ? `https://image.tmdb.org/t/p/w185/${profile.file_path}`
             : null,
         }));
       });
@@ -101,7 +101,7 @@ export class PersonComponent implements OnDestroy {
             return {
               link: `/movie/${item.id}`,
               imgSrc: item.poster_path
-                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+                ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
                 : null,
               title: item.title,
               rating: item.vote_average * 10,

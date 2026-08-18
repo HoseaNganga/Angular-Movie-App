@@ -66,7 +66,7 @@ export class MovieCategoryComponent implements OnInit, OnDestroy {
             const movie = {
               link: `/movie/${item.id}`,
               imgSrc: item.poster_path
-                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+                ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
                 : null,
               title: item.title,
               rating: item.vote_average * 10,

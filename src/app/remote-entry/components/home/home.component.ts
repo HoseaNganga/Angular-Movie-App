@@ -81,7 +81,7 @@ export class HomeComponent implements OnInit {
             this.trendingMovies_slider_data = res.results.map((item: any) => ({
               link: `/movie/${item.id}`,
               imgSrc: item.poster_path
-                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+                ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
                 : null,
               title: item.title,
               rating: item.vote_average * 10,
@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit {
             this.trendingTvShows_slider_data = res.results.map((item: any) => ({
               link: `/tv/${item.id}`,
               imgSrc: item.poster_path
-                ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+                ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
                 : null,
               title: item.title,
               rating: item.vote_average * 10,

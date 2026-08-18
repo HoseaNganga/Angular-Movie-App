@@ -165,7 +165,7 @@ describe('TvInfoComponent', () => {
     expect(component.cast_data).toEqual([
       {
         link: '/person/1',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/actor.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w185/actor.jpg',
         name: 'Actor Name',
         character: 'Character Name',
         popularity: 10.5,
@@ -192,7 +192,7 @@ describe('TvInfoComponent', () => {
       {
         link: '/tv/789',
         imgSrc:
-          'https://image.tmdb.org/t/p/w370_and_h556_bestv2/recommended.jpg',
+          'https://image.tmdb.org/t/p/w500/recommended.jpg',
         title: 'Recommended TV Show',
         vote: 8.5,
         rating: 85,

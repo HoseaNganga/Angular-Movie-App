@@ -230,13 +230,13 @@ describe('PersonComponent', () => {
         file_path: '/profile1.jpg',
         aspect_ratio: 0.667,
         full_path:
-          'https://image.tmdb.org/t/p/w370_and_h556_bestv2//profile1.jpg',
+          'https://image.tmdb.org/t/p/w185//profile1.jpg',
       },
       {
         file_path: '/profile2.jpg',
         aspect_ratio: 0.667,
         full_path:
-          'https://image.tmdb.org/t/p/w370_and_h556_bestv2//profile2.jpg',
+          'https://image.tmdb.org/t/p/w185//profile2.jpg',
       },
     ]);
   });

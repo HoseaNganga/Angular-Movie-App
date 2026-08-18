@@ -129,7 +129,7 @@ export class TvInfoComponent implements OnInit, OnDestroy {
           this.cast_data = res.cast.map((item: any) => ({
             link: `/person/${item.id}`,
             imgSrc: item.profile_path
-              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.profile_path}`
+              ? `https://image.tmdb.org/t/p/w185${item.profile_path}`
               : null,
             name: item.name,
             character: item.character,
@@ -151,7 +151,7 @@ export class TvInfoComponent implements OnInit, OnDestroy {
           this.recom_data = res.results.map((item: any) => ({
             link: `/tv/${item.id}`,
             imgSrc: item.poster_path
-              ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}`
+              ? `https://image.tmdb.org/t/p/w500${item.poster_path}`
               : null,
             title: item.name,
             vote: item.vote_average ? item.vote_average : 'N/A',

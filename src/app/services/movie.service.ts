@@ -9,9 +9,8 @@ import { EnvironmentService } from '../../environments/environment.service';
 export class MovieService {
   private readonly _httpClientService = inject(HttpClient);
   private readonly _envService = inject(EnvironmentService);
-  private readonly _api_key = this._envService.get('apiKey');
   private readonly language = 'en-US';
-  private readonly baseUrl = 'https://api.themoviedb.org/3';
+  private readonly baseUrl = `${this._envService.backendUrl}/tmdb`;
 
   getNowPlaying(mediaType: string, page: number): Observable<any> {
     const params = this.buildParams({ page: page.toString() });
@@ -60,7 +59,7 @@ export class MovieService {
 
   getBackdrops(id: number, mediaType: string): Observable<any> {
     return this._httpClientService.get(
-      `${this.baseUrl}/${mediaType}/${id}/images?api_key=${this._api_key}`
+      `${this.baseUrl}/${mediaType}/${id}/images`
     );
   }
 
@@ -151,9 +150,7 @@ export class MovieService {
   }
 
   private buildParams(params: any): HttpParams {
-    let httpParams = new HttpParams()
-      .set('api_key', this._api_key)
-      .set('language', this.language);
+    let httpParams = new HttpParams().set('language', this.language);
     for (const key in params) {
       if (params.hasOwnProperty(key)) {
         httpParams = httpParams.set(key, params[key]);

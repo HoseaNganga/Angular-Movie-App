@@ -58,7 +58,7 @@ describe('ListingComponent', () => {
     component.items = [
       {
         link: '/movie/1',
-        imgSrc: 'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster1.jpg',
+        imgSrc: 'https://image.tmdb.org/t/p/w500/poster1.jpg',
         title: 'Movie 1',
         rating: 75,
         vote: 7.5,
@@ -83,7 +83,7 @@ describe('ListingComponent', () => {
     expect(firstLink.getAttribute('ng-reflect-router-link')).toBe('/movie/1');
     const firstImg = itemElements[0].querySelector('.card__img img');
     expect(firstImg.getAttribute('src')).toBe(
-      'https://image.tmdb.org/t/p/w370_and_h556_bestv2/poster1.jpg'
+      'https://image.tmdb.org/t/p/w500/poster1.jpg'
     );
     expect(firstImg.getAttribute('alt')).toBe('Movie 1');
     expect(itemElements[0].querySelector('.card__img span')).toBeNull();
